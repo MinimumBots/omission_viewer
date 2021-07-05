@@ -6,6 +6,7 @@ const bot = new Client({
   partials: ['USER', 'CHANNEL', 'GUILD_MEMBER', 'MESSAGE', 'REACTION'],
   restTimeOffset: 100,
   retryLimit: 3,
+  presence: { activities: [{ name: '2枚目以降の画像を表示します' }] },
 });
 
 function initialize(): void {
