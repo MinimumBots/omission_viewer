@@ -1,6 +1,6 @@
 FROM node:16
 
-WORKDIR /app/image_expander
+WORKDIR /app/omission_viewer
 
 COPY package*.json ./
 RUN [ "npm", "ci" ]
