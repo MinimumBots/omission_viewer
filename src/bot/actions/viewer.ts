@@ -33,7 +33,7 @@ export namespace ImageViewer {
     if (!interaction.isButton()) return;
 
     const { prefix, args } = Utils.parseCustomID(interaction.customID);
-    console.log(prefix)
+
     if (prefix === prefixes.viewImages)
       sendViewImages(interaction, args)
         .catch(console.error);
