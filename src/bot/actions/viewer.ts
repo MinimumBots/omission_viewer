@@ -25,18 +25,19 @@ export namespace ImageViewer {
   }
 
   const prefixes = {
-    viewImages: 'viewImages',
+    viewImages: 'ViewImages',
     deleteSelf: 'DeleteSelf',
   };
 
   function resolveButton(interaction: Interaction): void {
     if (!interaction.isButton()) return;
 
-    const args = interaction.customID.split(',');
-    if (args[0] === prefixes.viewImages)
+    const { prefix, args } = Utils.parseCustomID(interaction.customID);
+    console.log(prefix)
+    if (prefix === prefixes.viewImages)
       sendViewImages(interaction, args)
         .catch(console.error);
-    if (args[0] === prefixes.deleteSelf)
+    if (prefix === prefixes.deleteSelf)
       deleteViewerMessage(interaction, args)
         .catch(console.error);
   }
@@ -79,13 +80,17 @@ export namespace ImageViewer {
               type: 'BUTTON',
               style: 'SUCCESS',
               label: '続きの画像を表示',
-              customID: `${prefixes.viewImages},${message.id}`,
+              customID: Utils.generateCustomID(
+                prefixes.viewImages, [message.id]
+              ),
             },
             {
               type: 'BUTTON',
               style: 'DANGER',
               label: '削除',
-              customID: `${prefixes.deleteSelf},${message.author.id}`,
+              customID: Utils.generateCustomID(
+                prefixes.deleteSelf, [message.author.id]
+              ),
             },
           ],
         },
@@ -100,7 +105,7 @@ export namespace ImageViewer {
     if (!channelID) return failButtonInteraction(interaction);
 
     const message = await Utils.fetchMessage(
-      interaction.client, channelID, args[1]
+      interaction.client, channelID, args[0]
     );
     if (!message) return failButtonInteraction(interaction);
 
@@ -119,7 +124,7 @@ export namespace ImageViewer {
     const channelID = interaction.channelID;
     if (!channelID) return failButtonInteraction(interaction);
 
-    if (interaction.user.id === args[1])
+    if (interaction.user.id === args[0])
       return Utils.deleteMessage(
         interaction.client, channelID, interaction.message.id
       );
