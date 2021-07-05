@@ -109,7 +109,7 @@ export namespace ImageViewer {
 
     return interaction.reply({
       ephemeral: true,
-      content: imageURLs.join('\n'),
+      embeds: imageURLs.map(url => ({ image: { url } })),
     });
   }
 
