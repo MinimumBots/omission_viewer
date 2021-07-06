@@ -10,7 +10,10 @@ import { Utils } from '../../utils';
 export namespace ImageViewer {
   export function initialize(bot: Client): void {
     bot.on('messageCreate', message => resolveMessage(message));
-    bot.on('messageUpdate', (_, message) => resolveMessage(message));
+    bot.on('messageUpdate', (oldMessage, newMessage) => {
+      resolveUpdatedMessage(oldMessage, newMessage);
+    });
+
     bot.on('interactionCreate', interaction => resolveButton(interaction));
   }
 
@@ -22,6 +25,12 @@ export namespace ImageViewer {
 
     sendViewerMessage(message)
       .catch(console.error);
+  }
+
+  function resolveUpdatedMessage(
+    oldMessage: LaxMessage, newMessage: LaxMessage
+  ): void {
+    if (!collectChainImageURLs(oldMessage).length) resolveMessage(newMessage);
   }
 
   const prefixes = {
@@ -42,7 +51,7 @@ export namespace ImageViewer {
         .catch(console.error);
   }
 
-  const chainMax = 4; // Maximum of images in the embed.
+  const chainMax = 4; // Maximum of images in one embed.
 
   function collectChainImageURLs(message: LaxMessage): string[] {
     const embeds = message.embeds;
@@ -110,7 +119,10 @@ export namespace ImageViewer {
     if (!message) return failButtonInteraction(interaction);
 
     const imageURLs = collectChainImageURLs(message);
-    if (!imageURLs.length) return failButtonInteraction(interaction);
+    if (!imageURLs.length) return interaction.reply({
+      ephemeral: true,
+      content: '⚠️ 2枚目以降の画像が見つかりませんでした',
+    });
 
     return interaction.reply({
       ephemeral: true,
