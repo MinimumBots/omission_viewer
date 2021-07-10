@@ -49,14 +49,13 @@ var ImageViewer;
     }
     ImageViewer.initialize = initialize;
     function resolveMessage(message) {
-        var imageURLs = collectChainImageURLs(message);
-        if (!imageURLs.length)
+        if (!countHiddenImages(message))
             return;
         sendViewerMessage(message)
             .catch(console.error);
     }
     function resolveUpdatedMessage(oldMessage, newMessage) {
-        if (!collectChainImageURLs(oldMessage).length)
+        if (!countHiddenImages(oldMessage))
             resolveMessage(newMessage);
     }
     var prefixes = {
@@ -66,7 +65,7 @@ var ImageViewer;
     function resolveButton(interaction) {
         if (!interaction.isButton())
             return;
-        var _a = utils_1.Utils.parseCustomID(interaction.customID), prefix = _a.prefix, args = _a.args;
+        var _a = utils_1.Utils.parseCustomId(interaction.customId), prefix = _a.prefix, args = _a.args;
         if (prefix === prefixes.viewImages)
             sendViewImages(interaction, args)
                 .catch(console.error);
@@ -74,28 +73,35 @@ var ImageViewer;
             deleteViewerMessage(interaction, args)
                 .catch(console.error);
     }
-    var chainMax = 4; // Maximum of images in one embed.
-    function collectChainImageURLs(message) {
-        var embeds = message.embeds;
-        var chain = [];
-        var queue = [];
-        var targetURL = null;
-        embeds.forEach(function (embed, i) {
-            var _a;
-            if (targetURL && targetURL === embed.url) {
-                var imageURL = (_a = embed.image) === null || _a === void 0 ? void 0 : _a.url;
-                if (imageURL && queue.length < chainMax)
-                    queue.push(imageURL);
-            }
-            else {
-                if (targetURL) {
-                    chain.push.apply(chain, queue);
-                    queue.length = 0;
+    function countHiddenImages(message) {
+        var embeds = message.embeds.slice();
+        return embeds.reduce(function (count, targetEmbed) {
+            var targetURL = targetEmbed === null || targetEmbed === void 0 ? void 0 : targetEmbed.url;
+            if (!targetURL)
+                return count;
+            return count + embeds.filter(function (embed, i) {
+                if (embed && embed.url !== targetURL)
+                    return false;
+                embeds[i] = null;
+                return true;
+            }).length - 1;
+        }, 0);
+    }
+    function collectImageURLsChain(message) {
+        var embeds = message.embeds.slice();
+        return embeds.reduce(function (chain, targetEmbed) {
+            var targetURL = targetEmbed === null || targetEmbed === void 0 ? void 0 : targetEmbed.url;
+            if (!targetURL)
+                return chain;
+            var urls = embeds.reduce(function (urls, embed, i) {
+                if ((embed === null || embed === void 0 ? void 0 : embed.url) && (embed === null || embed === void 0 ? void 0 : embed.url) === targetURL && embed.image) {
+                    embeds[i] = null;
+                    return urls.concat(embed.image.url);
                 }
-                targetURL = embeds[i].url;
-            }
-        });
-        return chain.concat(queue);
+                return urls;
+            }, []);
+            return urls.length ? chain.concat([urls]) : chain;
+        }, []);
     }
     function sendViewerMessage(laxMessage) {
         return __awaiter(this, void 0, void 0, function () {
@@ -114,14 +120,14 @@ var ImageViewer;
                                             {
                                                 type: 'BUTTON',
                                                 style: 'SUCCESS',
-                                                label: '続きの画像を表示',
-                                                customID: utils_1.Utils.generateCustomID(prefixes.viewImages, [message.id]),
+                                                label: 'すべての画像を表示',
+                                                customId: utils_1.Utils.generateCustomId(prefixes.viewImages, [message.id]),
                                             },
                                             {
                                                 type: 'BUTTON',
                                                 style: 'DANGER',
                                                 label: '削除',
-                                                customID: utils_1.Utils.generateCustomID(prefixes.deleteSelf, [message.author.id]),
+                                                customId: utils_1.Utils.generateCustomId(prefixes.deleteSelf, [message.author.id]),
                                             },
                                         ],
                                     },
@@ -134,40 +140,58 @@ var ImageViewer;
             });
         });
     }
+    var imageEmbedColors = [
+        0x00bb9f,
+        0xf7503f,
+        0x00cb7b,
+        0xf38033,
+        0x0097d6,
+        0xf8c53f,
+        0xa45ab1,
+        0xfa2961,
+    ];
     function sendViewImages(interaction, args) {
         return __awaiter(this, void 0, void 0, function () {
-            var channelID, message, imageURLs;
+            var channelId, message, chain, embeds;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        channelID = interaction.channelID;
-                        if (!channelID)
+                        channelId = interaction.channelId;
+                        if (!channelId)
                             return [2 /*return*/, failButtonInteraction(interaction)];
-                        return [4 /*yield*/, utils_1.Utils.fetchMessage(interaction.client, channelID, args[0])];
+                        return [4 /*yield*/, utils_1.Utils.fetchMessage(interaction.client, channelId, args[0])];
                     case 1:
                         message = _a.sent();
                         if (!message)
-                            return [2 /*return*/, failButtonInteraction(interaction)];
-                        imageURLs = collectChainImageURLs(message);
-                        if (!imageURLs.length)
                             return [2 /*return*/, interaction.reply({
                                     ephemeral: true,
-                                    content: '⚠️ 2枚目以降の画像が見つかりませんでした',
+                                    content: '⚠️ 対象のメッセージが見つかりません',
                                 })];
+                        if (!countHiddenImages(message))
+                            return [2 /*return*/, interaction.reply({
+                                    ephemeral: true,
+                                    content: '⚠️ 非表示となる画像が見つかりません',
+                                })];
+                        chain = collectImageURLsChain(message);
+                        embeds = chain.reduce(function (embeds, urls, i) { return (embeds.concat(urls.map(function (url, page) { return ({
+                            color: imageEmbedColors[i],
+                            image: { url: url },
+                            footer: { text: page + 1 + "/" + urls.length },
+                        }); }))); }, []);
                         return [2 /*return*/, interaction.reply({
                                 ephemeral: true,
-                                embeds: imageURLs.map(function (url) { return ({ image: { url: url } }); }),
+                                embeds: embeds,
                             })];
                 }
             });
         });
     }
     function deleteViewerMessage(interaction, args) {
-        var channelID = interaction.channelID;
-        if (!channelID)
+        var channelId = interaction.channelId;
+        if (!channelId)
             return failButtonInteraction(interaction);
         if (interaction.user.id === args[0])
-            return utils_1.Utils.deleteMessage(interaction.client, channelID, interaction.message.id);
+            return utils_1.Utils.deleteMessage(interaction.client, channelId, interaction.message.id);
         return interaction.reply({
             ephemeral: true,
             content: '⚠️ **このメッセージを削除できるのはメッセージの投稿者のみです**',
@@ -180,4 +204,4 @@ var ImageViewer;
         });
     }
 })(ImageViewer = exports.ImageViewer || (exports.ImageViewer = {}));
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidmlld2VyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vc3JjL2JvdC9hY3Rpb25zL3ZpZXdlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFPQSxxQ0FBb0M7QUFFcEMsSUFBaUIsV0FBVyxDQW9KM0I7QUFwSkQsV0FBaUIsV0FBVztJQUMxQixTQUFnQixVQUFVLENBQUMsR0FBVztRQUNwQyxHQUFHLENBQUMsRUFBRSxDQUFDLGVBQWUsRUFBRSxVQUFBLE9BQU8sSUFBSSxPQUFBLGNBQWMsQ0FBQyxPQUFPLENBQUMsRUFBdkIsQ0FBdUIsQ0FBQyxDQUFDO1FBQzVELEdBQUcsQ0FBQyxFQUFFLENBQUMsZUFBZSxFQUFFLFVBQUMsVUFBVSxFQUFFLFVBQVU7WUFDN0MscUJBQXFCLENBQUMsVUFBVSxFQUFFLFVBQVUsQ0FBQyxDQUFDO1FBQ2hELENBQUMsQ0FBQyxDQUFDO1FBRUgsR0FBRyxDQUFDLEVBQUUsQ0FBQyxtQkFBbUIsRUFBRSxVQUFBLFdBQVcsSUFBSSxPQUFBLGFBQWEsQ0FBQyxXQUFXLENBQUMsRUFBMUIsQ0FBMEIsQ0FBQyxDQUFDO0lBQ3pFLENBQUM7SUFQZSxzQkFBVSxhQU96QixDQUFBO0lBSUQsU0FBUyxjQUFjLENBQUMsT0FBbUI7UUFDekMsSUFBTSxTQUFTLEdBQUcscUJBQXFCLENBQUMsT0FBTyxDQUFDLENBQUM7UUFDakQsSUFBSSxDQUFDLFNBQVMsQ0FBQyxNQUFNO1lBQUUsT0FBTztRQUU5QixpQkFBaUIsQ0FBQyxPQUFPLENBQUM7YUFDdkIsS0FBSyxDQUFDLE9BQU8sQ0FBQyxLQUFLLENBQUMsQ0FBQztJQUMxQixDQUFDO0lBRUQsU0FBUyxxQkFBcUIsQ0FDNUIsVUFBc0IsRUFBRSxVQUFzQjtRQUU5QyxJQUFJLENBQUMscUJBQXFCLENBQUMsVUFBVSxDQUFDLENBQUMsTUFBTTtZQUFFLGNBQWMsQ0FBQyxVQUFVLENBQUMsQ0FB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
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidmlld2VyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vc3JjL2JvdC9hY3Rpb25zL3ZpZXdlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFTQSxxQ0FBb0M7QUFFcEMsSUFBaUIsV0FBVyxDQXVMM0I7QUF2TEQsV0FBaUIsV0FBVztJQUMxQixTQUFnQixVQUFVLENBQUMsR0FBVztRQUNwQyxHQUFHLENBQUMsRUFBRSxDQUFDLGVBQWUsRUFBRSxVQUFBLE9BQU8sSUFBSSxPQUFBLGNBQWMsQ0FBQyxPQUFPLENBQUMsRUFBdkIsQ0FBdUIsQ0FBQyxDQUFDO1FBQzVELEdBQUcsQ0FBQyxFQUFFLENBQUMsZUFBZSxFQUFFLFVBQUMsVUFBVSxFQUFFLFVBQVU7WUFDN0MscUJBQXFCLENBQUMsVUFBVSxFQUFFLFVBQVUsQ0FBQyxDQUFDO1FBQ2hELENBQUMsQ0FBQyxDQUFDO1FBRUgsR0FBRyxDQUFDLEVBQUUsQ0FBQyxtQkFBbUIsRUFBRSxVQUFBLFdBQVcsSUFBSSxPQUFBLGFBQWEsQ0FBQyxXQUFXLENBQUMsRUFBMUIsQ0FBMEIsQ0FBQyxDQUFDO0lBQ3pFLENBQUM7SUFQZSxzQkFBVSxhQU96QixDQUFBO0lBSUQsU0FBUyxjQUFjLENBQUMsT0FBbUI7UUFDekMsSUFBSSxDQUFDLGlCQUFpQixDQUFDLE9BQU8sQ0FBQztZQUFFLE9BQU87UUFFeEMsaUJBQWlCLENBQUMsT0FBTyxDQUFDO2FBQ3ZCLEtBQUssQ0FBQyxPQUFPLENBQUMsS0FBSyxDQUFDLENBQUM7SUFDMUIsQ0FBQztJQUVELFNBQVMscUJBQXFCLENBQzVCLFVBQXNCLEVBQUUsVUFBc0I7UUFFOUMsSUFBSSxDQUFDLGlCQUFpQixDQUFDLFVBQVUsQ0FBQztZQUFFLGNBQWMsQ0FBQyxVQUFVLENBQUMsQ0FBQztJQUNqRSxDQUFDO0lBRUQsSUFBTSxRQUFRLEdBQUc7UUFDZixVQUFVLEVBQUUsWUFB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

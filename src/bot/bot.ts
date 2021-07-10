@@ -6,7 +6,7 @@ const bot = new Client({
   partials: ['USER', 'CHANNEL', 'GUILD_MEMBER', 'MESSAGE', 'REACTION'],
   restTimeOffset: 100,
   retryLimit: 3,
-  presence: { activities: [{ name: 'スマホで2枚目以降の画像を表示します' }] },
+  presence: { activities: [{ name: 'スマホですべてのツイート画像を表示' }] },
 });
 
 function initialize(): void {
@@ -14,7 +14,7 @@ function initialize(): void {
 }
 
 bot.on('ready', () => initialize());
-bot.on('shardReady', shardID => console.info(`Shard No.${shardID} is ready.`));
+bot.on('shardReady', shardId => console.info(`Shard No.${shardId} is ready.`));
 
 bot.login()
   .catch(console.error);

@@ -44,19 +44,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Utils = void 0;
 var Utils;
 (function (Utils) {
-    function fetchMessage(bot, channelID, messageID) {
+    function fetchMessage(bot, channelId, messageId) {
         return __awaiter(this, void 0, void 0, function () {
             var channel, message, _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        channel = bot.channels.cache.get("" + BigInt(channelID));
+                        channel = bot.channels.cache.get("" + BigInt(channelId));
                         if (!(channel === null || channel === void 0 ? void 0 : channel.isText()))
                             return [2 /*return*/];
                         _b.label = 1;
                     case 1:
                         _b.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, channel.messages.fetch("" + BigInt(messageID))];
+                        return [4 /*yield*/, channel.messages.fetch("" + BigInt(messageId))];
                     case 2:
                         message = _b.sent();
                         return [2 /*return*/, message];
@@ -69,15 +69,15 @@ var Utils;
         });
     }
     Utils.fetchMessage = fetchMessage;
-    function deleteMessage(bot, channelID, messageID) {
+    function deleteMessage(bot, channelId, messageId) {
         return __awaiter(this, void 0, void 0, function () {
             var channel;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        channel = bot.channels.cache.get("" + BigInt(channelID));
+                        channel = bot.channels.cache.get("" + BigInt(channelId));
                         if (!(channel === null || channel === void 0 ? void 0 : channel.isText())) return [3 /*break*/, 2];
-                        return [4 /*yield*/, channel.messages.delete("" + BigInt(messageID))];
+                        return [4 /*yield*/, channel.messages.delete("" + BigInt(messageId))];
                     case 1:
                         _a.sent();
                         _a.label = 2;
@@ -87,15 +87,15 @@ var Utils;
         });
     }
     Utils.deleteMessage = deleteMessage;
-    var customIDSeparator = ',';
-    function generateCustomID(prefix, args) {
-        return __spreadArray([prefix], args).join(customIDSeparator);
+    var customIdSeparator = ',';
+    function generateCustomId(prefix, args) {
+        return __spreadArray([prefix], args).join(customIdSeparator);
     }
-    Utils.generateCustomID = generateCustomID;
-    function parseCustomID(customID) {
-        var splited = customID.split(customIDSeparator);
+    Utils.generateCustomId = generateCustomId;
+    function parseCustomId(customId) {
+        var splited = customId.split(customIdSeparator);
         return { prefix: splited[0], args: splited.slice(1) };
     }
-    Utils.parseCustomID = parseCustomID;
+    Utils.parseCustomId = parseCustomId;
 })(Utils = exports.Utils || (exports.Utils = {}));
 //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXRpbHMuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9zcmMvdXRpbHMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFFQSxJQUFpQixLQUFLLENBc0NyQjtBQXRDRCxXQUFpQixLQUFLO0lBQ3BCLFNBQXNCLFlBQVksQ0FDaEMsR0FBVyxFQUFFLFNBQTZCLEVBQUUsU0FBNkI7Ozs7Ozt3QkFFbkUsT0FBTyxHQUFHLEdBQUcsQ0FBQyxRQUFRLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxLQUFHLE1BQU0sQ0FBQyxTQUFTLENBQUcsQ0FBQyxDQUFDO3dCQUMvRCxJQUFJLENBQUMsQ0FBQSxPQUFPLGFBQVAsT0FBTyx1QkFBUCxPQUFPLENBQUUsTUFBTSxFQUFFLENBQUE7NEJBQUUsc0JBQU87Ozs7d0JBR2IscUJBQU0sT0FBTyxDQUFDLFFBQVEsQ0FBQyxLQUFLLENBQUMsS0FBRyxNQUFNLENBQUMsU0FBUyxDQUFHLENBQUMsRUFBQTs7d0JBQTlELE9BQU8sR0FBRyxTQUFvRDt3QkFDcEUsc0JBQU8sT0FBTyxFQUFDOzs7d0JBR2Ysc0JBQU87Ozs7O0tBRVY7SUFicUIsa0JBQVksZUFhakMsQ0FBQTtJQUVELFNBQXNCLGFBQWEsQ0FDakMsR0FBVyxFQUFFLFNBQTZCLEVBQUUsU0FBNkI7Ozs7Ozt3QkFFbkUsT0FBTyxHQUFHLEdBQUcsQ0FBQyxRQUFRLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxLQUFHLE1BQU0sQ0FBQyxTQUFTLENBQUcsQ0FBQyxDQUFDOzZCQUMzRCxDQUFBLE9BQU8sYUFBUCxPQUFPLHVCQUFQLE9BQU8sQ0FBRSxNQUFNLEVBQUUsQ0FBQSxFQUFqQix3QkFBaUI7d0JBQUUscUJBQU0sT0FBTyxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUMsS0FBRyxNQUFNLENBQUMsU0FBUyxDQUFHLENBQUMsRUFBQTs7d0JBQXJELFNBQXFELENBQUM7Ozs7OztLQUM5RTtJQUxxQixtQkFBYSxnQkFLbEMsQ0FBQTtJQUVELElBQU0saUJBQWlCLEdBQUcsR0FBRyxDQUFDO0lBRTlCLFNBQWdCLGdCQUFnQixDQUFDLE1BQWMsRUFBRSxJQUFjO1FBQzdELE9BQU8sZUFBQyxNQUFNLEdBQUssSUFBSSxFQUFFLElBQUksQ0FBQyxpQkFBaUIsQ0FBQyxDQUFDO0lBQ25ELENBQUM7SUFGZSxzQkFBZ0IsbUJBRS9CLENBQUE7SUFPRCxTQUFnQixhQUFhLENBQUMsUUFBZ0I7UUFDNUMsSUFBTSxPQUFPLEdBQUcsUUFBUSxDQUFDLEtBQUssQ0FBQyxpQkFBaUIsQ0FBQyxDQUFDO1FBQ2xELE9BQU8sRUFBRSxNQUFNLEVBQUUsT0FBTyxDQUFDLENBQUMsQ0FBQyxFQUFFLElBQUksRUFBRSxPQUFPLENBQUMsS0FBSyxDQUFDLENBQUMsQ0FBQyxFQUFFLENBQUM7SUFDeEQsQ0FBQztJQUhlLG1CQUFhLGdCQUc1QixDQUFBO0FBQ0gsQ0FBQyxFQXRDZ0IsS0FBSyxHQUFMLGFBQUssS0FBTCxhQUFLLFFBc0NyQiJ9
