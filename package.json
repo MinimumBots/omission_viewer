@@ -14,7 +14,7 @@
   "author": "GrapeColor",
   "license": "MIT",
   "dependencies": {
-    "discord.js": "github:discordjs/discord.js#ab0b3b9a07f5e4987e4f25e41b2a007f2db06322"
+    "discord.js": "github:discordjs/discord.js#f72ce7c136cf2dfe31a67b190c00e30ba7d70bfa"
   },
   "devDependencies": {
     "@types/node": "^15.12.4",
