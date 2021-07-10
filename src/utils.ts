@@ -2,13 +2,13 @@ import { Client, Message, Snowflake } from 'discord.js';
 
 export namespace Utils {
   export async function fetchMessage(
-    bot: Client, channelID: Snowflake | string, messageID: Snowflake | string
+    bot: Client, channelId: Snowflake | string, messageId: Snowflake | string
   ): Promise<Message | undefined> {
-    const channel = bot.channels.cache.get(`${BigInt(channelID)}`);
+    const channel = bot.channels.cache.get(`${BigInt(channelId)}`);
     if (!channel?.isText()) return;
 
     try {
-      const message = await channel.messages.fetch(`${BigInt(messageID)}`);
+      const message = await channel.messages.fetch(`${BigInt(messageId)}`);
       return message;
     }
     catch {
@@ -17,25 +17,25 @@ export namespace Utils {
   }
 
   export async function deleteMessage(
-    bot: Client, channelID: Snowflake | string, messageID: Snowflake | string
+    bot: Client, channelId: Snowflake | string, messageId: Snowflake | string
   ): Promise<void> {
-    const channel = bot.channels.cache.get(`${BigInt(channelID)}`);
-    if (channel?.isText()) await channel.messages.delete(`${BigInt(messageID)}`);
+    const channel = bot.channels.cache.get(`${BigInt(channelId)}`);
+    if (channel?.isText()) await channel.messages.delete(`${BigInt(messageId)}`);
   }
 
-  const customIDSeparator = ',';
+  const customIdSeparator = ',';
 
-  export function generateCustomID(prefix: string, args: string[]): string {
-    return [prefix, ...args].join(customIDSeparator);
+  export function generateCustomId(prefix: string, args: string[]): string {
+    return [prefix, ...args].join(customIdSeparator);
   }
 
-  interface ParsedCustomID {
+  interface ParsedCustomId {
     prefix: string;
     args: string[];
   }
 
-  export function parseCustomID(customID: string): ParsedCustomID {
-    const splited = customID.split(customIDSeparator);
+  export function parseCustomId(customId: string): ParsedCustomId {
+    const splited = customId.split(customIdSeparator);
     return { prefix: splited[0], args: splited.slice(1) };
   }
 }
