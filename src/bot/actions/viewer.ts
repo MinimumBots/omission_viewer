@@ -6,6 +6,7 @@ import {
   MessageEmbed,
   MessageEmbedOptions,
   PartialMessage,
+  Snowflake,
 } from 'discord.js';
 import { Utils } from '../../utils';
 
@@ -21,17 +22,20 @@ export namespace ImageViewer {
 
   type LaxMessage = Message | PartialMessage;
 
+  const responsedMessageIds: Set<Snowflake> = new Set;
+
   function resolveMessage(message: LaxMessage): void {
     if (!countHiddenImages(message)) return;
 
     sendViewerMessage(message)
+      .then(() => responsedMessageIds.add(message.id))
       .catch(console.error);
   }
 
   function resolveUpdatedMessage(
     oldMessage: LaxMessage, newMessage: LaxMessage
   ): void {
-    if (!countHiddenImages(oldMessage)) resolveMessage(newMessage);
+    if (!responsedMessageIds.has(oldMessage.id)) resolveMessage(newMessage);
   }
 
   const prefixes = {
@@ -52,45 +56,49 @@ export namespace ImageViewer {
         .catch(console.error);
   }
 
+  type NullableEmbed = (MessageEmbed | null)
+
   function countHiddenImages(message: LaxMessage): number {
-    const embeds: (MessageEmbed | null)[] = message.embeds.slice();
+    const embeds: NullableEmbed[] = message.embeds.slice();
 
-    return embeds.reduce((count, targetEmbed) => {
-      const targetURL = targetEmbed?.url;
-      if (!targetURL) return count;
-
-      return count + embeds.filter((embed, i) => {
-        if (!embed?.image || embed?.url !== targetURL) return false;
-
-        embeds[i] = null;
-        return true;
-      }).length - 1;
-    }, 0);
+    return embeds.reduce((count, embed) => (
+      embed?.url
+        ? count + collectAndSweepEqualURLEmbeds(embeds, embed.url).length - 1
+        : count
+    ), 0);
   }
 
   function collectImageURLsChain(message: LaxMessage): string[][] {
-    const embeds: (MessageEmbed | null)[] = message.embeds.slice();
+    const embeds: NullableEmbed[] = message.embeds.slice();
 
     return embeds.reduce((chain, targetEmbed) => {
-      const targetURL = targetEmbed?.url;
-      if (!targetURL) return chain;
+      const url = targetEmbed?.url;
+      if (!url) return chain;
 
-      const urls = embeds.reduce((urls, embed, i) => {
-        if (!embed?.image || embed.url !== targetURL) return urls;
-
-        embeds[i] = null;
-        return urls.concat(embed.image.url);
-      }, [] as string[]);
+      const urls = collectAndSweepEqualURLEmbeds(embeds, url)
+        .map(embed => embed ? embed.image?.url ?? '' : '');
 
       return urls.length ? chain.concat([urls]) : chain;
     }, [] as string[][]);
+  }
+
+  function collectAndSweepEqualURLEmbeds(
+    embeds: NullableEmbed[], url: string
+  ): NullableEmbed[] {
+    return embeds
+      .filter((embed, i) => {
+        if (!embed?.image || embed?.url !== url) return false;
+
+        embeds[i] = null;
+        return true;
+      });
   }
 
   async function sendViewerMessage(laxMessage: LaxMessage): Promise<void> {
     const message = await laxMessage.fetch();
 
     await message.channel.send({
-      content: '\u200B',
+      content: '※画像はこのチャンネルの一番下に表示されます',
       components: [
         {
           type: 'ACTION_ROW',
