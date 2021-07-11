@@ -60,7 +60,7 @@ export namespace ImageViewer {
       if (!targetURL) return count;
 
       return count + embeds.filter((embed, i) => {
-        if (embed && embed.url !== targetURL) return false;
+        if (!embed?.image || embed?.url !== targetURL) return false;
 
         embeds[i] = null;
         return true;
@@ -76,11 +76,10 @@ export namespace ImageViewer {
       if (!targetURL) return chain;
 
       const urls = embeds.reduce((urls, embed, i) => {
-        if (embed?.url && embed?.url === targetURL && embed.image) {
-          embeds[i] = null;
-          return urls.concat(embed.image.url);
-        }
-        return urls;
+        if (!embed?.image || embed.url !== targetURL) return urls;
+
+        embeds[i] = null;
+        return urls.concat(embed.image.url);
       }, [] as string[]);
 
       return urls.length ? chain.concat([urls]) : chain;
@@ -161,10 +160,7 @@ export namespace ImageViewer {
       )
     ), [] as MessageEmbedOptions[]);
 
-    return interaction.reply({
-      ephemeral: true,
-      embeds: embeds,
-    });
+    return interaction.reply({ ephemeral: true, embeds });
   }
 
   function deleteViewerMessage(
