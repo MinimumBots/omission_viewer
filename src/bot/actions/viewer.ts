@@ -98,7 +98,7 @@ export namespace ImageViewer {
     const message = await laxMessage.fetch();
 
     await message.channel.send({
-      content: '※画像はこのチャンネルの一番下に表示されます',
+      content: '画像はこのチャンネルの一番下に表示されます',
       components: [
         {
           type: 'ACTION_ROW',
