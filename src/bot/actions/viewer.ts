@@ -6,6 +6,7 @@ import {
   MessageEmbed,
   MessageEmbedOptions,
   PartialMessage,
+  Snowflake,
 } from 'discord.js';
 import { Utils } from '../../utils';
 
@@ -21,17 +22,20 @@ export namespace ImageViewer {
 
   type LaxMessage = Message | PartialMessage;
 
+  const responsedMessageIds: Set<Snowflake> = new Set;
+
   function resolveMessage(message: LaxMessage): void {
     if (!countHiddenImages(message)) return;
 
     sendViewerMessage(message)
+      .then(() => responsedMessageIds.add(message.id))
       .catch(console.error);
   }
 
   function resolveUpdatedMessage(
     oldMessage: LaxMessage, newMessage: LaxMessage
   ): void {
-    if (!countHiddenImages(oldMessage)) resolveMessage(newMessage);
+    if (!responsedMessageIds.has(oldMessage.id)) resolveMessage(newMessage);
   }
 
   const prefixes = {
@@ -94,7 +98,7 @@ export namespace ImageViewer {
     const message = await laxMessage.fetch();
 
     await message.channel.send({
-      content: '※画像はチャンネルの一番下に表示されます',
+      content: '※画像はこのチャンネルの一番下に表示されます',
       components: [
         {
           type: 'ACTION_ROW',
