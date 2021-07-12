@@ -61,21 +61,17 @@ export namespace ImageViewer {
   function countHiddenImages(message: LaxMessage): number {
     const embeds: NullableEmbed[] = message.embeds.slice();
 
-    return embeds.reduce((count, embed) => (
-      embed?.url
-        ? count + collectAndSweepEqualURLEmbeds(embeds, embed.url).length - 1
-        : count
-    ), 0);
+    return embeds.reduce((count, embed) => {
+      const length = collectAndSweepEqualURLEmbeds(embeds, embed?.url).length;
+      return length ? count + length - 1 : count;
+    }, 0);
   }
 
   function collectImageURLsChain(message: LaxMessage): string[][] {
     const embeds: NullableEmbed[] = message.embeds.slice();
 
     return embeds.reduce((chain, targetEmbed) => {
-      const url = targetEmbed?.url;
-      if (!url) return chain;
-
-      const urls = collectAndSweepEqualURLEmbeds(embeds, url)
+      const urls = collectAndSweepEqualURLEmbeds(embeds, targetEmbed?.url)
         .map(embed => embed ? embed.image?.url ?? '' : '');
 
       return urls.length ? chain.concat([urls]) : chain;
@@ -83,12 +79,11 @@ export namespace ImageViewer {
   }
 
   function collectAndSweepEqualURLEmbeds(
-    embeds: NullableEmbed[], url: string
+    embeds: NullableEmbed[], url: string | null | undefined
   ): NullableEmbed[] {
     return embeds
       .filter((embed, i) => {
-        if (!embed?.image || embed?.url !== url) return false;
-
+        if (!embed || !url || embed.url !== url || !embed.image) return false;
         embeds[i] = null;
         return true;
       });
@@ -148,13 +143,13 @@ export namespace ImageViewer {
     if (!message)
       return interaction.reply({
         ephemeral: true,
-        content: '⚠️ 対象のメッセージが見つかりません',
+        content: '⚠️ **対象のメッセージが見つかりません**',
       });
 
     if (!countHiddenImages(message))
       return interaction.reply({
         ephemeral: true,
-        content: '⚠️ 非表示となる画像が見つかりません',
+        content: '⚠️ **非表示となる画像が見つかりません**',
       });
 
     const chain = collectImageURLsChain(message);
