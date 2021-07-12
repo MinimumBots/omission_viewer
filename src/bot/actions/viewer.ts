@@ -56,37 +56,26 @@ export namespace ImageViewer {
         .catch(console.error);
   }
 
-  type NullableEmbed = (MessageEmbed | null)
-
   function countHiddenImages(message: LaxMessage): number {
-    const embeds: NullableEmbed[] = message.embeds.slice();
-
-    return embeds.reduce((count, embed) => {
-      const length = collectAndSweepEqualURLEmbeds(embeds, embed?.url).length;
-      return length ? count + length - 1 : count;
-    }, 0);
+    return collectImageURLsChunks(message)
+      .reduce((count, urls) => count + urls.length - 1, 0);
   }
 
-  function collectImageURLsChain(message: LaxMessage): string[][] {
-    const embeds: NullableEmbed[] = message.embeds.slice();
+  function collectImageURLsChunks(message: LaxMessage): string[][] {
+    const embeds: (MessageEmbed | null)[] = message.embeds.slice();
 
-    return embeds.reduce((chain, targetEmbed) => {
-      const urls = collectAndSweepEqualURLEmbeds(embeds, targetEmbed?.url)
-        .map(embed => embed ? embed.image?.url ?? '' : '');
+    return message.embeds.reduce((chunks, targetEmbed, i) => {
+      if (!embeds[i]) return chunks;
 
-      return urls.length ? chain.concat([urls]) : chain;
-    }, [] as string[][]);
-  }
+      const urls = embeds.reduce((urls, embed, i) => {
+        if (!embed?.image || targetEmbed.url !== embed.url) return urls;
 
-  function collectAndSweepEqualURLEmbeds(
-    embeds: NullableEmbed[], url: string | null | undefined
-  ): NullableEmbed[] {
-    return embeds
-      .filter((embed, i) => {
-        if (!embed || !url || embed.url !== url || !embed.image) return false;
         embeds[i] = null;
-        return true;
-      });
+        return urls.concat(embed.image.url);
+      }, [] as string[]);
+
+      return urls.length ? chunks.concat([urls]) : chunks;
+    }, [] as string[][]);
   }
 
   async function sendViewerMessage(laxMessage: LaxMessage): Promise<void> {
@@ -152,8 +141,8 @@ export namespace ImageViewer {
         content: '⚠️ **非表示となる画像が見つかりません**',
       });
 
-    const chain = collectImageURLsChain(message);
-    const embeds = chain.reduce((embeds, urls, i) => (
+    const chunks = collectImageURLsChunks(message);
+    const embeds = chunks.reduce((embeds, urls, i) => (
       embeds.concat(
         urls.map((url, page) => ({
           color: imageEmbedColors[i],
