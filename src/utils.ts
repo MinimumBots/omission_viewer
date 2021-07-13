@@ -1,4 +1,5 @@
 import { Client, Message, Snowflake } from 'discord.js';
+import { LaxMessage } from './constants';
 
 export namespace Utils {
   export async function fetchMessage(
@@ -21,6 +22,10 @@ export namespace Utils {
   ): Promise<void> {
     const channel = bot.channels.cache.get(`${BigInt(channelId)}`);
     if (channel?.isText()) await channel.messages.delete(`${BigInt(messageId)}`);
+  }
+
+  export function removeMessageCache(message: LaxMessage): boolean {
+    return message.channel.messages.cache.delete(message.id);
   }
 
   const customIdSeparator = ',';

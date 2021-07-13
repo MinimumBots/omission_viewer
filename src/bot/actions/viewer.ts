@@ -2,40 +2,34 @@ import {
   ButtonInteraction,
   Client,
   Interaction,
-  Message,
   MessageEmbed,
   MessageEmbedOptions,
-  PartialMessage,
   Snowflake,
 } from 'discord.js';
+import { LaxMessage } from '../../constants';
 import { Utils } from '../../utils';
 
 export namespace ImageViewer {
   export function initialize(bot: Client): void {
     bot.on('messageCreate', message => resolveMessage(message));
-    bot.on('messageUpdate', (oldMessage, newMessage) => {
-      resolveUpdatedMessage(oldMessage, newMessage);
-    });
+    bot.on('messageUpdate', (_, message) => resolveUpdatedMessage(message));
 
     bot.on('interactionCreate', interaction => resolveButton(interaction));
   }
 
-  type LaxMessage = Message | PartialMessage;
-
   const responsedMessageIds: Set<Snowflake> = new Set;
 
   function resolveMessage(message: LaxMessage): void {
-    if (!countHiddenImages(message)) return;
-
-    sendViewerMessage(message)
-      .then(() => responsedMessageIds.add(message.id))
-      .catch(console.error);
+    if (countHiddenImages(message))
+      sendViewerMessage(message)
+        .then(() => responsedMessageIds.add(message.id))
+        .catch(console.error);
+    else
+      Utils.removeMessageCache(message);
   }
 
-  function resolveUpdatedMessage(
-    oldMessage: LaxMessage, newMessage: LaxMessage
-  ): void {
-    if (!responsedMessageIds.has(oldMessage.id)) resolveMessage(newMessage);
+  function resolveUpdatedMessage(message: LaxMessage): void {
+    if (!responsedMessageIds.has(message.id)) resolveMessage(message);
   }
 
   const prefixes = {
