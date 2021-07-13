@@ -120,6 +120,8 @@ export namespace ImageViewer {
     0xfa2961,
   ];
 
+  const embedLengthMax = 10;
+
   async function sendViewImages(
     interaction: ButtonInteraction, args: string[]
   ): Promise<void> {
@@ -135,24 +137,32 @@ export namespace ImageViewer {
         content: '⚠️ **対象のメッセージが見つかりません**',
       });
 
-    if (!countHiddenImages(message))
+    const imageURLsChunks = collectImageURLsChunks(message)
+    if (!imageURLsChunks.length)
       return interaction.reply({
         ephemeral: true,
-        content: '⚠️ **非表示となる画像が見つかりません**',
+        content: '⚠️ **表示する画像が見つかりません**',
       });
 
-    const chunks = collectImageURLsChunks(message);
-    const embeds = chunks.reduce((embeds, urls, i) => (
-      embeds.concat(
-        urls.map((url, page) => ({
-          color: imageEmbedColors[i],
-          image: { url },
-          footer: { text: `${page + 1}/${urls.length}` },
-        }))
-      )
-    ), [] as MessageEmbedOptions[]);
+    const embedsChunks = imageURLsChunks.reduce((chunks, urls, i) => {
+      let lastChunk = chunks[chunks.length - 1];
+      if (!lastChunk || lastChunk.length + urls.length > embedLengthMax)
+        chunks.push(lastChunk = []);
 
-    return interaction.reply({ ephemeral: true, embeds });
+      lastChunk.push(...urls.map((url, page) => ({
+        color: imageEmbedColors[i],
+        image: { url },
+        footer: { text: `${page + 1}/${urls.length}` },
+      })));
+
+      return chunks;
+    }, [] as MessageEmbedOptions[][]);
+
+    await interaction.reply({ ephemeral: true, embeds: embedsChunks[0] });
+    await Promise.all(
+      embedsChunks.slice(1)
+        .map(embeds => interaction.followUp({ ephemeral: true, embeds }))
+    );
   }
 
   function deleteViewerMessage(
