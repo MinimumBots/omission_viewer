@@ -13,4 +13,4 @@ https://discord.com/api/oauth2/authorize?client_id=629507137995014164&permission
 ## サポート
 Omission Viewerについてのご質問やご要望等は、Discordのサポートサーバーにて承っております。  
 なお、ご質問の内容はGrapeColorが開発するBOTについてのことに限らせて頂きます。  
-https://discord.gg/STzZ6GK  
+https://grapecolor-lab.vineder.com  
