@@ -1,5 +1,8 @@
 import { Client } from 'discord.js';
-import { ImageViewer } from './actions/viewer';
+
+import { ButtonReactor } from './reactors/ButtonReactor';
+import { ContextMenuReactor } from './reactors/ContextMenuReactor';
+import { MessageReactor } from './reactors/MessageReactor';
 
 const bot = new Client({
   intents: ['GUILDS', 'GUILD_MESSAGES'],
@@ -10,7 +13,9 @@ const bot = new Client({
 });
 
 function initialize(): void {
-  ImageViewer.initialize(bot);
+  MessageReactor.initialize(bot);
+  ButtonReactor.initialize(bot);
+  ContextMenuReactor.initialize(bot);
 }
 
 bot.on('ready', () => initialize());
