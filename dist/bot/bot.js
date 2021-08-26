@@ -9,7 +9,7 @@ const bot = new discord_js_1.Client({
     partials: ['USER', 'CHANNEL', 'GUILD_MEMBER', 'MESSAGE', 'REACTION'],
     restTimeOffset: 100,
     retryLimit: 3,
-    presence: { activities: [{ name: 'スマホですべてのツイート画像を表示' }] },
+    presence: { activities: [{ name: 'スマホでツイートの画像をすべて表示' }] },
 });
 function initialize() {
     MessageReactor_1.MessageReactor.initialize(bot);
