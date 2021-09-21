@@ -3,7 +3,7 @@ import {
   Message,
   Snowflake, 
 } from 'discord.js';
-import { LaxMessage } from '../typings';
+import { LaxMessage } from './typings';
 
 export async function fetchMessage(
   bot: Client, channelId: Snowflake, messageId: Snowflake

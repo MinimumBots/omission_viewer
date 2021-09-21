@@ -59,7 +59,7 @@ function routeButtonInteraction(interaction: ButtonInteraction): void {
 
   if (customId === ButtonPrefixes.viewPictures)
     job = new ButtonViewPicturesJob(interaction);
-  if (customId === ButtonPrefixes.viewImages)   // Will be removed in the next update.
+  if (customId.startsWith(ButtonPrefixes.viewImages))   // Will be removed in the next update.
     job = new ButtonViewPicturesJob(interaction);
 
   job?.respond()
