@@ -1,24 +1,22 @@
 import {
-  BaseCommandInteraction,
   Client,
   Message,
-  MessageComponentInteraction,
   Snowflake, 
 } from 'discord.js';
-import { LaxMessage } from '../constants';
+import { LaxMessage } from '../typings';
 
 export async function fetchMessage(
   bot: Client, channelId: Snowflake, messageId: Snowflake
-): Promise<Message | undefined> {
+): Promise<Message | null> {
   const channel = bot.channels.cache.get(channelId);
-  if (!channel?.isText()) return;
+  if (!channel?.isText()) return null;
 
   try {
     const message = await channel.messages.fetch(messageId);
     return message;
   }
   catch {
-    return;
+    return null;
   }
 }
 
@@ -31,11 +29,4 @@ export async function deleteMessage(
 
 export function removeMessageCache(message: LaxMessage): boolean {
   return message.channel.messages.cache.delete(message.id);
-}
-
-export function replyErrorMessage(
-  interaction: MessageComponentInteraction | BaseCommandInteraction,
-  content: string,
-): Promise<void> {
-  return interaction.reply({ content: `⚠️ **${content}**`, ephemeral: true });
 }

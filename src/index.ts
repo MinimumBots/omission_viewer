@@ -3,7 +3,7 @@
  */
 
 import { ShardingManager } from 'discord.js';
-import { BOT_SHARD_LIST, BOT_TOTAL_SHARDS, DISCORD_TOKEN } from './constants';
+import { BOT_SHARD_LIST, BOT_TOTAL_SHARDS, DISCORD_TOKEN } from './enviroments';
 
 const manager = new ShardingManager('./dist/bot/bot.js', {
   token: DISCORD_TOKEN,
