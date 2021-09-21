@@ -1,5 +1,5 @@
 import { ContextMenuInteraction, Message } from 'discord.js';
-import { InteractionMessage, MessageTriggeredInteraction } from '../../typings';
+import { InteractionMessage, MessageTriggeredInteraction } from '../typings';
 import { deleteMessage, fetchMessage } from '../utilities';
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 

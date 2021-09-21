@@ -6,12 +6,20 @@ import {
   Interaction,
 } from 'discord.js';
 import { ButtonPrefixes, CommandNames } from './constants';
-import { LaxMessage } from '../typings';
+import { LaxMessage } from './typings';
 import { ButtonViewPicturesJob } from './jobs/ButtonViewPicturesJob';
 import { CommonJob } from './jobs/CommonJob';
 import { PostedPicturesJob } from './jobs/PostedPicturesJob';
 import { ContextMenuViewPictureJob } from './jobs/ContextMenuViewPicturesJob';
 import { RemoveControllerJob } from './jobs/RemoveControllerJob';
+
+export function setupJobs(bot: Client): void {
+  syncCommands(bot);
+
+  bot.on('messageCreate', message => routeMessage(message));
+  bot.on('messageUpdate', (oldMessage, message) => routeMessage(message, oldMessage));
+  bot.on('interactionCreate', interaction => routeInteraction(interaction));
+}
 
 const commandData: ApplicationCommandData[] = [
   {
@@ -24,13 +32,11 @@ const commandData: ApplicationCommandData[] = [
   },
 ];
 
-export function setupJobs(bot: Client): void {
+function syncCommands(bot: Client): void {
+  if (bot.shard && !bot.shard.ids.some(id => id === 0)) return;
+
   bot.application?.commands.set(commandData)
     .catch(console.error);
-
-  bot.on('messageCreate', message => routeMessage(message));
-  bot.on('messageUpdate', (oldMessage, message) => routeMessage(message, oldMessage));
-  bot.on('interactionCreate', interaction => routeInteraction(interaction));
 }
 
 function routeMessage(message: LaxMessage, oldMessage?: LaxMessage): void {
@@ -52,6 +58,8 @@ function routeButtonInteraction(interaction: ButtonInteraction): void {
   let job: CommonJob | null = null;
 
   if (customId === ButtonPrefixes.viewPictures)
+    job = new ButtonViewPicturesJob(interaction);
+  if (customId === ButtonPrefixes.viewImages)   // Will be removed in the next update.
     job = new ButtonViewPicturesJob(interaction);
 
   job?.respond()

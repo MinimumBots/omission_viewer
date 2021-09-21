@@ -7,7 +7,7 @@ import {
   InteractionMessage,
   MessageTriggeredInteraction,
   ReplyableInteraction,
-} from '../../typings';
+} from '../typings';
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 
 export abstract class ViewPicturesJob extends ViewerRelatedJob {
@@ -23,9 +23,13 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
     const messagePayloads = this.generateViewingMessagePayloads(imageURLsChunks);
 
     return await Promise.all([
-      interaction.reply({ ...messagePayloads[0], fetchReply: true }),
+      interaction.reply({
+        ...messagePayloads[0],
+        ephemeral : true,
+        fetchReply: true,
+      }),
       ...messagePayloads.slice(1)
-        .map(payload => interaction.followUp(payload))
+        .map(payload => interaction.followUp({ ...payload, ephemeral: true }))
     ]);
   }
 
@@ -63,7 +67,7 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
     0xa45ab1,
     0xfa2961,
   ];
-  
+
   private embedLengthMax = 10;
 
   private generateViewingMessagePayloads(
@@ -78,18 +82,17 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
       ) {
         lastMessage = {};
         lastMessage.embeds = [];
-        lastMessage.ephemeral = true;
         messages.push(lastMessage);
       }
-  
+
       const embeds = urls.map((url, page) => ({
         color: this.imageEmbedColors[i],
         image: { url },
         footer: { text: `${page + 1}/${urls.length}` },
       }));
-  
+
       lastMessage.embeds.push(...embeds);
-  
+
       return messages;
     }, [] as (MessageOptions & InteractionReplyOptions)[]);
   }

@@ -8,7 +8,7 @@ import {
   InteractionMessage,
   MessageTriggeredInteraction,
   ReplyableInteraction,
-} from '../../typings';
+} from '../typings';
 
 export abstract class CommonJob {
   abstract respond(): Promise<unknown>;

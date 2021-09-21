@@ -1,6 +1,6 @@
 import { Message, Snowflake } from 'discord.js';
 import { ButtonPrefixes } from '../constants';
-import { LaxMessage } from '../../typings';
+import { LaxMessage } from '../typings';
 import { removeMessageCache } from '../utilities';
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 
