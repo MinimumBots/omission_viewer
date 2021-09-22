@@ -3,7 +3,7 @@
 
 ## 導入方法
 以下のリンクから導入できます。  
-https://discord.com/api/oauth2/authorize?client_id=629507137995014164&permissions=68608&scope=bot%20applications.commands  
+https://invite-omission-viewer.vineder.com  
 
 ## 使い方
 2枚以上の画像を含んだツイート等のURLを投稿すると、このBOTから操作ボタンが送信されます。  
