@@ -1,27 +1,31 @@
-import { Message, Snowflake } from 'discord.js';
+import { Snowflake, Client, Message } from 'discord.js';
 import { ButtonPrefixes } from '../constants';
 import { LaxMessage } from '../typings';
-import { removeMessageCache } from '../utilities';
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 
 export class PostedPicturesJob extends ViewerRelatedJob {
   static respondedMessageIds: Set<Snowflake> = new Set();
 
   constructor(
-    public message: LaxMessage,
-    public oldMessage?: LaxMessage,
+    private bot: Client<true>,
+    private message: LaxMessage,
+    private oldMessage?: LaxMessage,
   ) {
     super();
   }
 
   async respond(): Promise<Message | null> {
+    const channel = this.message.channel;
+
     if (
-      this.oldMessage && !this.containsSomePictures(this.oldMessage)
+      channel.type === 'DM'
+      || !channel.permissionsFor(this.bot.user)?.has('SEND_MESSAGES')
+      || PostedPicturesJob.respondedMessageIds.has(this.message.id)
+      || this.oldMessage && this.containsSomePictures(this.oldMessage)
       || !this.containsSomePictures(this.message)
-    ) {
-      removeMessageCache(this.message);
-      return null;
-    }
+    ) return null;
+
+    PostedPicturesJob.respondedMessageIds.add(this.message.id);
 
     return await this.sendController();
   }

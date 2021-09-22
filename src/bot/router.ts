@@ -13,11 +13,11 @@ import { PostedPicturesJob } from './jobs/PostedPicturesJob';
 import { ContextMenuViewPictureJob } from './jobs/ContextMenuViewPicturesJob';
 import { RemoveControllerJob } from './jobs/RemoveControllerJob';
 
-export function setupJobs(bot: Client): void {
+export function setupJobs(bot: Client<true>): void {
   syncCommands(bot);
 
-  bot.on('messageCreate', message => routeMessage(message));
-  bot.on('messageUpdate', (oldMessage, message) => routeMessage(message, oldMessage));
+  bot.on('messageCreate', message => routeMessage(bot, message));
+  bot.on('messageUpdate', (oldMessage, message) => routeMessage(bot, message, oldMessage));
   bot.on('interactionCreate', interaction => routeInteraction(interaction));
 }
 
@@ -32,15 +32,15 @@ const commandData: ApplicationCommandData[] = [
   },
 ];
 
-function syncCommands(bot: Client): void {
+function syncCommands(bot: Client<true>): void {
   if (bot.shard && !bot.shard.ids.some(id => id === 0)) return;
 
-  bot.application?.commands.set(commandData)
+  bot.application.commands.set(commandData)
     .catch(console.error);
 }
 
-function routeMessage(message: LaxMessage, oldMessage?: LaxMessage): void {
-  const job = new PostedPicturesJob(message, oldMessage);
+function routeMessage(bot: Client<true>, message: LaxMessage, oldMessage?: LaxMessage): void {
+  const job = new PostedPicturesJob(bot, message, oldMessage);
 
   job.respond()
     .catch(console.error);

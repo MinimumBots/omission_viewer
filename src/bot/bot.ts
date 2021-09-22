@@ -9,11 +9,11 @@ const bot = new Client({
   presence: { activities: [{ name: 'スマホでツイートの画像をすべて表示' }] },
 });
 
-function initialize(): void {
+function initialize(bot: Client<true>): void {
   setupJobs(bot);
 }
 
-bot.on('ready', () => initialize());
+bot.on('ready', bot => initialize(bot));
 bot.on('shardReady', shardId => console.info(`Shard No.${shardId} is ready.`));
 
 bot.login()
