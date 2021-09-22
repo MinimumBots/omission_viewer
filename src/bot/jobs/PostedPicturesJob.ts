@@ -3,8 +3,26 @@ import { ButtonPrefixes } from '../constants';
 import { LaxMessage } from '../typings';
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 
+type ChannelId = Snowflake;
+type MessageId = Snowflake;
+
 export class PostedPicturesJob extends ViewerRelatedJob {
-  static respondedMessageIds: Set<Snowflake> = new Set();
+  static respondedMessageIds: Map<MessageId, ChannelId> = new Map();
+
+  static sweepMessageIds(bot: Client<true>): void {
+    const channels = bot.channels.cache;
+
+    this.respondedMessageIds.forEach((messageId, channelId, messageIds) => {
+      const channel = channels.get(channelId);
+      if (!channel || !channel.isText()) return;
+
+      if (!channel.messages.cache.has(messageId)) messageIds.delete(messageId);
+    });
+  }
+
+  private static entryRespondedMessage(message: LaxMessage): Map<MessageId, ChannelId> {
+    return this.respondedMessageIds.set(message.id, message.channelId);
+  }
 
   constructor(
     private bot: Client<true>,
@@ -25,7 +43,7 @@ export class PostedPicturesJob extends ViewerRelatedJob {
       || !this.containsSomePictures(this.message)
     ) return null;
 
-    PostedPicturesJob.respondedMessageIds.add(this.message.id);
+    PostedPicturesJob.entryRespondedMessage(this.message);
 
     return await this.sendController();
   }

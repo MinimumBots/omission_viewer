@@ -15,6 +15,7 @@ import { RemoveControllerJob } from './jobs/RemoveControllerJob';
 
 export function setupJobs(bot: Client<true>): void {
   syncCommands(bot);
+  PostedPicturesJob.sweepMessageIds(bot);
 
   bot.on('messageCreate', message => routeMessage(bot, message));
   bot.on('messageUpdate', (oldMessage, message) => routeMessage(bot, message, oldMessage));
