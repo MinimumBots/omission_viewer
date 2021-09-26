@@ -1,13 +1,10 @@
-import {
-  InteractionReplyOptions,
-  Message,
-  MessageOptions,
-} from 'discord.js';
-import {
+import type { InteractionReplyOptions, Message, MessageOptions } from 'discord.js';
+import type {
   InteractionMessage,
   MessageTriggeredInteraction,
   ReplyableInteraction,
 } from '../typings';
+
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 
 export abstract class ViewPicturesJob extends ViewerRelatedJob {

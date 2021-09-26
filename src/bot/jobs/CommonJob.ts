@@ -1,14 +1,11 @@
-import {
-  Snowflake,
-  ContextMenuInteraction,
-  Message,
-  MessageComponentInteraction,
-} from 'discord.js';
-import {
+import type { Snowflake } from 'discord.js';
+import type {
   InteractionMessage,
   MessageTriggeredInteraction,
   ReplyableInteraction,
 } from '../typings';
+
+import { ContextMenuInteraction, Message, MessageComponentInteraction } from 'discord.js';
 
 export abstract class CommonJob {
   abstract respond(): Promise<unknown>;

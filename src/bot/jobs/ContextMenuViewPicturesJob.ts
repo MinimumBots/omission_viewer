@@ -1,5 +1,6 @@
-import { ContextMenuInteraction, Message } from 'discord.js';
-import { InteractionMessage, MessageTriggeredInteraction } from '../typings';
+import type { ContextMenuInteraction, Message } from 'discord.js';
+import type { InteractionMessage, MessageTriggeredInteraction } from '../typings';
+
 import { fetchMessage } from '../utilities';
 import { ViewPicturesJob } from './ViewPicturesJob';
 

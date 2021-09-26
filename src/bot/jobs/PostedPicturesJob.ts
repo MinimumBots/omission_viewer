@@ -1,6 +1,7 @@
-import { Snowflake, Client, Message } from 'discord.js';
+import type { Snowflake, Client, Message } from 'discord.js';
+import type { LaxMessage } from '../typings';
+
 import { ButtonPrefixes } from '../constants';
-import { LaxMessage } from '../typings';
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 
 type ChannelId = Snowflake;

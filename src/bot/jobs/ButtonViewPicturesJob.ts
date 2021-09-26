@@ -1,5 +1,6 @@
-import { ButtonInteraction, Message } from 'discord.js';
-import { InteractionMessage, MessageTriggeredInteraction } from '../typings';
+import type { ButtonInteraction, Message } from 'discord.js';
+import type { InteractionMessage, MessageTriggeredInteraction } from '../typings';
+
 import { fetchMessage } from '../utilities';
 import { ViewPicturesJob } from './ViewPicturesJob';
 

@@ -1,5 +1,6 @@
-import { MessageEmbed } from 'discord.js';
-import { LaxMessage } from '../typings';
+import type { MessageEmbed } from 'discord.js';
+import type { LaxMessage } from '../typings';
+
 import { CommonJob } from './CommonJob';
 
 export abstract class ViewerRelatedJob extends CommonJob {

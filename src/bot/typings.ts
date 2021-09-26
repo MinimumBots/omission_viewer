@@ -1,11 +1,11 @@
-import {
+import type {
   BaseCommandInteraction,
   ContextMenuInteraction,
   Message,
   MessageComponentInteraction,
   PartialMessage,
 } from 'discord.js';
-import { APIMessage } from 'discord-api-types';
+import type { APIMessage } from 'discord-api-types';
 
 export type LaxMessage = Message | PartialMessage;
 export type InteractionMessage = Message | APIMessage;

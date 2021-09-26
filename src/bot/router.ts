@@ -1,12 +1,13 @@
-import {
+import type {
   ApplicationCommandData,
   ButtonInteraction,
   Client,
   ContextMenuInteraction,
   Interaction,
 } from 'discord.js';
+import type { LaxMessage } from './typings';
+
 import { ButtonPrefixes, CommandNames } from './constants';
-import { LaxMessage } from './typings';
 import { ButtonViewPicturesJob } from './jobs/ButtonViewPicturesJob';
 import { CommonJob } from './jobs/CommonJob';
 import { PostedPicturesJob } from './jobs/PostedPicturesJob';
@@ -17,9 +18,10 @@ export function setupJobs(bot: Client<true>): void {
   syncCommands(bot);
   PostedPicturesJob.sweepMessageIds(bot);
 
-  bot.on('messageCreate', message => routeMessage(bot, message));
-  bot.on('messageUpdate', (oldMessage, message) => routeMessage(bot, message, oldMessage));
-  bot.on('interactionCreate', interaction => routeInteraction(interaction));
+  bot
+    .on('messageCreate', message => routeMessage(bot, message))
+    .on('messageUpdate', (oldMessage, message) => routeMessage(bot, message, oldMessage))
+    .on('interactionCreate', interaction => routeInteraction(interaction));
 }
 
 const commandData: ApplicationCommandData[] = [

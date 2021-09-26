@@ -13,12 +13,15 @@ function initialize(bot: Client<true>): void {
   setupJobs(bot);
 }
 
-bot.on('ready', bot => initialize(bot));
-bot.on('shardReady', shardId => console.info(`Shard No.${shardId} is ready.`));
+bot
+  .on('ready', bot => initialize(bot))
+  .on('shardReady', shardId => console.info(`Shard No.${shardId} is ready.`));
 
 bot.login()
   .catch(console.error);
 
-process.on('exit', () => bot.destroy());
-process.on('SIGTERM', () => process.exit(0));
-process.on('SIGINT',  () => process.exit(0));
+['SIGTERM', 'SIGINT']
+  .forEach(signal => process.on(signal, () => {
+    bot.destroy();
+    process.exit(0);
+  }));

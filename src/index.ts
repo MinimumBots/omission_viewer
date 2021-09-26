@@ -3,7 +3,7 @@
  */
 
 import { ShardingManager } from 'discord.js';
-import { BOT_SHARD_LIST, BOT_TOTAL_SHARDS, DISCORD_TOKEN } from './enviroments';
+import { BOT_SHARD_LIST, BOT_TOTAL_SHARDS, DISCORD_TOKEN } from './environments';
 
 const manager = new ShardingManager('./dist/bot/bot.js', {
   token: DISCORD_TOKEN,
@@ -16,6 +16,7 @@ manager.on('shardCreate', shard => {
 });
 
 console.info('Start spawning shards.');
+
 manager.spawn({ timeout: -1 })
   .then(() => console.info('All shards were successfully spawned.'))
   .catch(console.error);

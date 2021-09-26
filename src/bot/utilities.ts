@@ -1,9 +1,9 @@
-import {
+import type {
   Client,
   Message,
   Snowflake, 
 } from 'discord.js';
-import { LaxMessage } from './typings';
+import type { LaxMessage } from './typings';
 
 export async function fetchMessage(
   bot: Client, channelId: Snowflake, messageId: Snowflake
