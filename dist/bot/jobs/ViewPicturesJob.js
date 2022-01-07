@@ -25,16 +25,16 @@ class ViewPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
         if (!imageURLsChunks.length)
             return this.replyAsMissingImages(interaction);
         const messagePayloads = this.generateViewingMessagePayloads(imageURLsChunks);
-        return await Promise.all([
-            interaction.reply({
-                content: `${interaction.user}`,
-                ...messagePayloads[0],
-                ephemeral: true,
-                fetchReply: true,
-            }),
-            ...messagePayloads.slice(1)
-                .map(payload => interaction.followUp({ ...payload, ephemeral: true }))
-        ]);
+        const repliedMessage = await interaction.reply({
+            content: `${interaction.user}`,
+            ...messagePayloads[0],
+            ephemeral: true,
+            fetchReply: true,
+        });
+        const followUpedMessages = await Promise.all(messagePayloads
+            .slice(1)
+            .map(payload => interaction.followUp({ ...payload, ephemeral: true })));
+        return [repliedMessage, ...followUpedMessages];
     }
     async replyAsMissingMessage(interaction) {
         return [

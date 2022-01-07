@@ -13,16 +13,20 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
 
     const messagePayloads = this.generateViewingMessagePayloads(imageURLsChunks);
 
-    return await Promise.all([
-      interaction.reply({
-        content: `${interaction.user}`,
-        ...messagePayloads[0],
-        ephemeral : true,
-        fetchReply: true,
-      }),
-      ...messagePayloads.slice(1)
+    const repliedMessage = await interaction.reply({
+      content: `${interaction.user}`,
+      ...messagePayloads[0],
+      ephemeral : true,
+      fetchReply: true,
+    });
+
+    const followUpedMessages = await Promise.all(
+      messagePayloads
+        .slice(1)
         .map(payload => interaction.followUp({ ...payload, ephemeral: true }))
-    ]);
+    );
+
+    return [repliedMessage, ...followUpedMessages];
   }
 
   protected abstract fetchTargetMessage(interaction: MessageTriggeredInteraction<'cached'>): Promise<Message | null>
