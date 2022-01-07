@@ -28,6 +28,7 @@ class PostedPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
         if (channel.type === 'DM'
             || !channel.permissionsFor(this.bot.user)?.has('SEND_MESSAGES')
             || PostedPicturesJob.respondedMessageIds.has(this.message.id)
+            || this.oldMessage && this.message.editedAt && channel.lastMessageId !== this.message.id
             || this.oldMessage && this.containsSomePictures(this.oldMessage))
             return null;
         const imageURLsChunks = this.collectImageURLsChunks(this.message);

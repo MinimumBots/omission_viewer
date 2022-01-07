@@ -25,11 +25,7 @@ export class PostedPicturesJob extends ViewerRelatedJob {
     return this.respondedMessageIds.set(message.id, message.channelId);
   }
 
-  constructor(
-    private bot: Client<true>,
-    private message: LaxMessage,
-    private oldMessage?: LaxMessage,
-  ) {
+  constructor(private bot: Client<true>, private message: LaxMessage, private oldMessage?: LaxMessage) {
     super();
   }
 
@@ -40,6 +36,7 @@ export class PostedPicturesJob extends ViewerRelatedJob {
       channel.type === 'DM'
       || !channel.permissionsFor(this.bot.user)?.has('SEND_MESSAGES')
       || PostedPicturesJob.respondedMessageIds.has(this.message.id)
+      || this.oldMessage && this.message.editedAt && channel.lastMessageId !== this.message.id
       || this.oldMessage && this.containsSomePictures(this.oldMessage)
     ) return null;
 
