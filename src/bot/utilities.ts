@@ -5,9 +5,7 @@ import type {
 } from 'discord.js';
 import type { LaxMessage } from './typings';
 
-export async function fetchMessage(
-  bot: Client, channelId: Snowflake, messageId: Snowflake
-): Promise<Message | null> {
+export async function fetchMessage(bot: Client, channelId: Snowflake, messageId: Snowflake): Promise<Message | null> {
   const channel = bot.channels.cache.get(channelId);
   if (!channel?.isText()) return null;
 
@@ -20,9 +18,7 @@ export async function fetchMessage(
   }
 }
 
-export async function deleteMessage(
-  bot: Client, channelId: Snowflake, messageId: Snowflake
-): Promise<void> {
+export async function deleteMessage(bot: Client, channelId: Snowflake, messageId: Snowflake): Promise<void> {
   const channel = bot.channels.cache.get(channelId);
   if (channel?.isText()) await channel.messages.delete(messageId);
 }

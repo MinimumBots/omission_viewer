@@ -1,15 +1,14 @@
-import type { ContextMenuInteraction, Message } from 'discord.js';
-import type { InteractionMessage, MessageTriggeredInteraction } from '../typings';
+import type { Message, MessageContextMenuInteraction } from 'discord.js';
 
 import { deleteMessage, fetchMessage } from '../utilities';
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 
 export class RemoveControllerJob extends ViewerRelatedJob {
-  constructor(private interaction: ContextMenuInteraction) {
+  constructor(private interaction: MessageContextMenuInteraction<'cached'>) {
     super();
   }
 
-  async respond(): Promise<InteractionMessage | null> {
+  async respond(): Promise<Message<true> | null> {
     const message = await this.fetchTargetMessage(this.interaction);
     if (!message)
       return this.replyErrorMessage(
@@ -33,20 +32,15 @@ export class RemoveControllerJob extends ViewerRelatedJob {
     return null;
   }
 
-  private async fetchTargetMessage(
-    interaction: MessageTriggeredInteraction
-  ): Promise<Message | null> {
-    if (!interaction.isContextMenu()) return null;
+  private async fetchTargetMessage(interaction: MessageContextMenuInteraction<'cached'>): Promise<Message | null> {
+    if (!interaction.isMessageContextMenu()) return null;
 
-    const channelId = this.getTriggerChannelId(interaction);
-    if (!channelId) return null;
+    const message = this.interaction.targetMessage;
 
-    return await fetchMessage(interaction.client, channelId, interaction.targetId) ?? null;
+    return await fetchMessage(message.client, message.channelId, message.id) ?? null;
   }
 
-  private async fetchReferenceMessage(
-    message: Message
-  ): Promise<Message | null> {
+  private async fetchReferenceMessage(message: Message): Promise<Message | null> {
     const reference = message.reference;
     if (!reference || !reference.messageId) return null;
 

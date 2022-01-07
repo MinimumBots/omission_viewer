@@ -27,6 +27,7 @@ class ViewPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
         const messagePayloads = this.generateViewingMessagePayloads(imageURLsChunks);
         return await Promise.all([
             interaction.reply({
+                content: `${interaction.user}`,
                 ...messagePayloads[0],
                 ephemeral: true,
                 fetchReply: true,

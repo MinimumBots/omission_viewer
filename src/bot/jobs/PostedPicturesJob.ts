@@ -41,12 +41,14 @@ export class PostedPicturesJob extends ViewerRelatedJob {
       || !channel.permissionsFor(this.bot.user)?.has('SEND_MESSAGES')
       || PostedPicturesJob.respondedMessageIds.has(this.message.id)
       || this.oldMessage && this.containsSomePictures(this.oldMessage)
-      || !this.containsSomePictures(this.message)
     ) return null;
+
+    const imageURLsChunks = this.collectImageURLsChunks(this.message);
+    if (!imageURLsChunks.some(urls => urls.length > 1)) return null;
 
     PostedPicturesJob.entryRespondedMessage(this.message);
 
-    return await this.sendController();
+    return await this.sendController(imageURLsChunks.flat().length);
   }
 
   private containsSomePictures(message: LaxMessage): boolean {
@@ -54,11 +56,11 @@ export class PostedPicturesJob extends ViewerRelatedJob {
       .some(urls => urls.length - 1 > 0);
   }
 
-  private async sendController(): Promise<Message> {
+  private async sendController(imageCount: number): Promise<Message> {
     const message = await this.message.fetch();
 
     return await message.reply({
-      content: 'このメッセージ内のすべての画像をチャンネルの一番下に表示します',
+      content: '表示されていない画像を表示します',
       components: [
         {
           type: 'ACTION_ROW',
@@ -66,7 +68,7 @@ export class PostedPicturesJob extends ViewerRelatedJob {
             {
               type: 'BUTTON',
               style: 'SUCCESS',
-              label: 'すべての画像を表示',
+              label: `${imageCount} 枚の画像を表示`,
               customId: ButtonPrefixes.viewPictures,
             },
           ],

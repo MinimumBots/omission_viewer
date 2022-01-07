@@ -37,22 +37,22 @@ function routeMessage(bot, message, oldMessage) {
         .catch(console.error);
 }
 function routeInteraction(interaction) {
+    if (!interaction.inCachedGuild())
+        return;
     if (interaction.isButton())
         routeButtonInteraction(interaction);
-    if (interaction.isContextMenu())
-        routeContextMenuInteraction(interaction);
+    if (interaction.isMessageContextMenu())
+        routeMessageContextMenuInteraction(interaction);
 }
 function routeButtonInteraction(interaction) {
     const customId = interaction.customId;
     let job = null;
     if (customId === constants_1.ButtonPrefixes.viewPictures)
         job = new ButtonViewPicturesJob_1.ButtonViewPicturesJob(interaction);
-    if (customId.startsWith(constants_1.ButtonPrefixes.viewImages)) // Will be removed in the next update.
-        job = new ButtonViewPicturesJob_1.ButtonViewPicturesJob(interaction);
     job?.respond()
         .catch(console.error);
 }
-function routeContextMenuInteraction(interaction) {
+function routeMessageContextMenuInteraction(interaction) {
     const commandName = interaction.commandName;
     let job = null;
     if (commandName === constants_1.CommandNames.viewPictures)

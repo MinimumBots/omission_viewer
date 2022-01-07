@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommandNames = exports.ButtonPrefixes = void 0;
 exports.ButtonPrefixes = {
     viewPictures: 'ViewPictures',
-    viewImages: 'ViewImages', // Will be removed in the next update.
 };
 exports.CommandNames = {
     viewPictures: 'すべての画像を表示',

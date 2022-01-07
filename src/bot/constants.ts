@@ -1,6 +1,5 @@
 export const ButtonPrefixes = {
   viewPictures: 'ViewPictures',
-  viewImages  : 'ViewImages',   // Will be removed in the next update.
 };
 
 export const CommandNames = {

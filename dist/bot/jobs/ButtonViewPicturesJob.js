@@ -14,16 +14,13 @@ class ButtonViewPicturesJob extends ViewPicturesJob_1.ViewPicturesJob {
     async fetchTargetMessage(interaction) {
         if (!interaction.isButton())
             return null;
-        const channelId = this.getTriggerChannelId(interaction);
-        if (!channelId)
-            return null;
-        const triggerMessage = await utilities_1.fetchMessage(interaction.client, channelId, interaction.message.id);
+        const triggerMessage = interaction.message;
         if (!triggerMessage)
             return null;
         const targetMessageId = triggerMessage.reference?.messageId;
         if (!targetMessageId)
             return null;
-        return await utilities_1.fetchMessage(interaction.client, channelId, targetMessageId) ?? null;
+        return await utilities_1.fetchMessage(interaction.client, triggerMessage.channelId, targetMessageId) ?? null;
     }
 }
 exports.ButtonViewPicturesJob = ButtonViewPicturesJob;

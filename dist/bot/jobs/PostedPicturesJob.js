@@ -28,20 +28,22 @@ class PostedPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
         if (channel.type === 'DM'
             || !channel.permissionsFor(this.bot.user)?.has('SEND_MESSAGES')
             || PostedPicturesJob.respondedMessageIds.has(this.message.id)
-            || this.oldMessage && this.containsSomePictures(this.oldMessage)
-            || !this.containsSomePictures(this.message))
+            || this.oldMessage && this.containsSomePictures(this.oldMessage))
+            return null;
+        const imageURLsChunks = this.collectImageURLsChunks(this.message);
+        if (!imageURLsChunks.some(urls => urls.length > 1))
             return null;
         PostedPicturesJob.entryRespondedMessage(this.message);
-        return await this.sendController();
+        return await this.sendController(imageURLsChunks.flat().length);
     }
     containsSomePictures(message) {
         return this.collectImageURLsChunks(message)
             .some(urls => urls.length - 1 > 0);
     }
-    async sendController() {
+    async sendController(imageCount) {
         const message = await this.message.fetch();
         return await message.reply({
-            content: 'このメッセージ内のすべての画像をチャンネルの一番下に表示します',
+            content: '表示されていない画像を表示します',
             components: [
                 {
                     type: 'ACTION_ROW',
@@ -49,7 +51,7 @@ class PostedPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
                         {
                             type: 'BUTTON',
                             style: 'SUCCESS',
-                            label: 'すべての画像を表示',
+                            label: `${imageCount} 枚の画像を表示`,
                             customId: constants_1.ButtonPrefixes.viewPictures,
                         },
                     ],

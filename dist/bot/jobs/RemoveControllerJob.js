@@ -21,12 +21,10 @@ class RemoveControllerJob extends ViewerRelatedJob_1.ViewerRelatedJob {
         return null;
     }
     async fetchTargetMessage(interaction) {
-        if (!interaction.isContextMenu())
+        if (!interaction.isMessageContextMenu())
             return null;
-        const channelId = this.getTriggerChannelId(interaction);
-        if (!channelId)
-            return null;
-        return await utilities_1.fetchMessage(interaction.client, channelId, interaction.targetId) ?? null;
+        const message = this.interaction.targetMessage;
+        return await utilities_1.fetchMessage(message.client, message.channelId, message.id) ?? null;
     }
     async fetchReferenceMessage(message) {
         const reference = message.reference;

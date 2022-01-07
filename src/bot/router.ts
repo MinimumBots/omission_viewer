@@ -2,8 +2,8 @@ import type {
   ApplicationCommandData,
   ButtonInteraction,
   Client,
-  ContextMenuInteraction,
   Interaction,
+  MessageContextMenuInteraction,
 } from 'discord.js';
 import type { LaxMessage } from './typings';
 
@@ -50,26 +50,25 @@ function routeMessage(bot: Client<true>, message: LaxMessage, oldMessage?: LaxMe
 }
 
 function routeInteraction(interaction: Interaction): void {
+  if (!interaction.inCachedGuild()) return;
+
   if (interaction.isButton())
     routeButtonInteraction(interaction);
-  if (interaction.isContextMenu())
-    routeContextMenuInteraction(interaction);
+  if (interaction.isMessageContextMenu())
+    routeMessageContextMenuInteraction(interaction);
 }
 
-function routeButtonInteraction(interaction: ButtonInteraction): void {
+function routeButtonInteraction(interaction: ButtonInteraction<'cached'>): void {
   const customId = interaction.customId;
   let job: CommonJob | null = null;
 
-  if (customId === ButtonPrefixes.viewPictures)
-    job = new ButtonViewPicturesJob(interaction);
-  if (customId.startsWith(ButtonPrefixes.viewImages))   // Will be removed in the next update.
-    job = new ButtonViewPicturesJob(interaction);
+  if (customId === ButtonPrefixes.viewPictures) job = new ButtonViewPicturesJob(interaction);
 
   job?.respond()
     .catch(console.error);
 }
 
-function routeContextMenuInteraction(interaction: ContextMenuInteraction): void {
+function routeMessageContextMenuInteraction(interaction: MessageContextMenuInteraction<'cached'>): void {
   const commandName = interaction.commandName;
   let job: CommonJob | null = null;
 

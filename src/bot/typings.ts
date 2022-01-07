@@ -4,11 +4,12 @@ import type {
   Message,
   MessageComponentInteraction,
   PartialMessage,
+  CacheType,
 } from 'discord.js';
-import type { APIMessage } from 'discord-api-types';
 
 export type LaxMessage = Message | PartialMessage;
-export type InteractionMessage = Message | APIMessage;
 
-export type ReplyableInteraction = BaseCommandInteraction | MessageComponentInteraction;
-export type MessageTriggeredInteraction = ContextMenuInteraction | MessageComponentInteraction;
+export type ReplyableInteraction<Cached extends CacheType = CacheType>
+  = BaseCommandInteraction<Cached> | MessageComponentInteraction<Cached>;
+export type MessageTriggeredInteraction<Cached extends CacheType = CacheType>
+  = ContextMenuInteraction<Cached> | MessageComponentInteraction<Cached>;

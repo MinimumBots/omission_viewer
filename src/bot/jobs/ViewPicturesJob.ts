@@ -1,16 +1,10 @@
 import type { InteractionReplyOptions, Message, MessageOptions } from 'discord.js';
-import type {
-  InteractionMessage,
-  MessageTriggeredInteraction,
-  ReplyableInteraction,
-} from '../typings';
+import type { MessageTriggeredInteraction, ReplyableInteraction } from '../typings';
 
 import { ViewerRelatedJob } from './ViewerRelatedJob';
 
 export abstract class ViewPicturesJob extends ViewerRelatedJob {
-  protected async sendImages(
-    interaction: MessageTriggeredInteraction,
-  ): Promise<InteractionMessage[]> {
+  protected async sendImages(interaction: MessageTriggeredInteraction<'cached'>): Promise<Message<true>[]> {
     const message = await this.fetchTargetMessage(interaction);
     if (!message) return this.replyAsMissingMessage(interaction);
 
@@ -21,6 +15,7 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
 
     return await Promise.all([
       interaction.reply({
+        content: `${interaction.user}`,
         ...messagePayloads[0],
         ephemeral : true,
         fetchReply: true,
@@ -30,13 +25,9 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
     ]);
   }
 
-  protected abstract fetchTargetMessage(
-    interaction: MessageTriggeredInteraction
-  ): Promise<Message | null>
+  protected abstract fetchTargetMessage(interaction: MessageTriggeredInteraction<'cached'>): Promise<Message | null>
 
-  private async replyAsMissingMessage(
-    interaction: ReplyableInteraction
-  ): Promise<InteractionMessage[]> {
+  private async replyAsMissingMessage(interaction: ReplyableInteraction<'cached'>): Promise<Message<true>[]> {
     return [
       await this.replyErrorMessage(
         interaction, '対象のメッセージが見つかりません'
@@ -44,9 +35,7 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
     ];
   }
 
-  private async replyAsMissingImages(
-    interaction: ReplyableInteraction
-  ): Promise<InteractionMessage[]> {
+  private async replyAsMissingImages(interaction: ReplyableInteraction<'cached'>): Promise<Message<true>[]> {
     return [
       await this.replyErrorMessage(
         interaction, '表示する画像が見つかりません'
@@ -67,9 +56,7 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
 
   private embedLengthMax = 10;
 
-  private generateViewingMessagePayloads(
-    imageURLsChunks: string[][]
-  ): (MessageOptions & InteractionReplyOptions)[] {
+  private generateViewingMessagePayloads(imageURLsChunks: string[][]): (MessageOptions & InteractionReplyOptions)[] {
     return imageURLsChunks.reduce((messages, urls, i) => {
       let lastMessage = messages.at(-1);
       if (

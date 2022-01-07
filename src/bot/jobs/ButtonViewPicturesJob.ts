@@ -1,37 +1,27 @@
 import type { ButtonInteraction, Message } from 'discord.js';
-import type { InteractionMessage, MessageTriggeredInteraction } from '../typings';
+import type { MessageTriggeredInteraction } from '../typings';
 
 import { fetchMessage } from '../utilities';
 import { ViewPicturesJob } from './ViewPicturesJob';
 
 export class ButtonViewPicturesJob extends ViewPicturesJob {
-  constructor(private interaction: ButtonInteraction) {
+  constructor(private interaction: ButtonInteraction<'cached'>) {
     super();
   }
 
-  async respond(): Promise<InteractionMessage[]> {
+  async respond(): Promise<Message<true>[]> {
     return await this.sendImages(this.interaction);
   }
 
-  protected async fetchTargetMessage(
-    interaction: MessageTriggeredInteraction
-  ): Promise<Message | null> {
+  protected async fetchTargetMessage(interaction: MessageTriggeredInteraction<'cached'>): Promise<Message | null> {
     if (!interaction.isButton()) return null;
 
-    const channelId = this.getTriggerChannelId(interaction);
-    if (!channelId) return null;
-
-    const triggerMessage = await fetchMessage(
-      interaction.client, channelId, interaction.message.id
-    );
+    const triggerMessage = interaction.message;
     if (!triggerMessage) return null;
 
     const targetMessageId = triggerMessage.reference?.messageId;
     if (!targetMessageId) return null;
 
-    return await fetchMessage(
-      interaction.client, channelId, targetMessageId
-    ) ?? null;
+    return await fetchMessage(interaction.client, triggerMessage.channelId, targetMessageId) ?? null;
   }
 }
-
