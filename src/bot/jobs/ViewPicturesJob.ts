@@ -1,17 +1,17 @@
 import type { InteractionReplyOptions, Message, MessageOptions } from 'discord.js';
 import type { MessageTriggeredInteraction, ReplyableInteraction } from '../typings';
 
-import { ViewerRelatedJob } from './ViewerRelatedJob';
+import { ImageURLsMap, ViewerRelatedJob } from './ViewerRelatedJob';
 
 export abstract class ViewPicturesJob extends ViewerRelatedJob {
   protected async sendImages(interaction: MessageTriggeredInteraction<'cached'>): Promise<Message<true>[]> {
     const message = await this.fetchTargetMessage(interaction);
     if (!message) return this.replyAsMissingMessage(interaction);
 
-    const imageURLsChunks = this.collectImageURLsChunks(message);
-    if (!imageURLsChunks.length) return this.replyAsMissingImages(interaction);
+    const imageURLsMap = this.collectImageURLsMap(message);
+    if (!imageURLsMap.size) return this.replyAsMissingImages(interaction);
 
-    const messagePayloads = this.generateViewingMessagePayloads(imageURLsChunks);
+    const messagePayloads = this.generateViewingMessagePayloads(imageURLsMap);
 
     const repliedMessage = await interaction.reply({
       content: `${interaction.user}`,
@@ -60,28 +60,32 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
 
   private embedLengthMax = 10;
 
-  private generateViewingMessagePayloads(imageURLsChunks: string[][]): (MessageOptions & InteractionReplyOptions)[] {
-    return imageURLsChunks.reduce((messages, urls, i) => {
-      let lastMessage = messages.at(-1);
+  private generateViewingMessagePayloads(imageURLsMap: ImageURLsMap): (MessageOptions & InteractionReplyOptions)[] {
+    return [...imageURLsMap].reduce((payloads, pair, i) => {
+      let lastMessage = payloads.at(-1);
+      const [siteURL, imageURLs] = pair;
+
       if (
         !lastMessage
         || !lastMessage.embeds
-        || lastMessage.embeds.length + urls.length > this.embedLengthMax
+        || lastMessage.embeds.length + imageURLs.length > this.embedLengthMax
       ) {
         lastMessage = {};
         lastMessage.embeds = [];
-        messages.push(lastMessage);
+        payloads.push(lastMessage);
       }
 
-      const embeds = urls.map((url, page) => ({
+      const embeds = imageURLs.map((imageURL, page) => ({
         color: this.imageEmbedColors[i],
-        image: { url },
-        footer: { text: `${page + 1}/${urls.length}` },
+        url: page === 0 ? siteURL : undefined,
+        title: page === 0 ? '画像の元ページを開く' : undefined,
+        image: { url: imageURL },
+        footer: { text: `${page + 1}/${imageURLs.length}` },
       }));
 
       lastMessage.embeds.push(...embeds);
 
-      return messages;
+      return payloads;
     }, [] as (MessageOptions & InteractionReplyOptions)[]);
   }
 }

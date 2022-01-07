@@ -40,17 +40,17 @@ export class PostedPicturesJob extends ViewerRelatedJob {
       || this.oldMessage && this.containsSomePictures(this.oldMessage)
     ) return null;
 
-    const imageURLsChunks = this.collectImageURLsChunks(this.message);
-    if (!imageURLsChunks.some(urls => urls.length > 1)) return null;
+    const imageURLsMap = this.collectImageURLsMap(this.message);
+    if (!imageURLsMap.some(urls => urls.length > 1)) return null;
 
     PostedPicturesJob.entryRespondedMessage(this.message);
 
-    return await this.sendController(imageURLsChunks.flat().length);
+    return await this.sendController([...imageURLsMap.values()].flat().length);
   }
 
   private containsSomePictures(message: LaxMessage): boolean {
-    return this.collectImageURLsChunks(message)
-      .some(urls => urls.length - 1 > 0);
+    return this.collectImageURLsMap(message)
+      .some(urls => urls.length > 1);
   }
 
   private async sendController(imageCount: number): Promise<Message> {

@@ -1,23 +1,22 @@
 import type { MessageEmbed } from 'discord.js';
 import type { LaxMessage } from '../typings';
 
+import { Collection } from 'discord.js';
 import { CommonJob } from './CommonJob';
 
+export type ImageURLsMap = Collection<string, string[]>;
+
 export abstract class ViewerRelatedJob extends CommonJob {
-  protected collectImageURLsChunks(message: LaxMessage): string[][] {
-    const embeds: (MessageEmbed | null)[] = message.embeds.slice();
+  protected collectImageURLsMap(message: LaxMessage): ImageURLsMap {
+    const map: ImageURLsMap = new Collection();
 
-    return message.embeds.reduce((chunks, targetEmbed, i) => {
-      if (!embeds[i]) return chunks;
+    message.embeds.forEach(embed => {
+      if (!embed.url || !embed.image) return;
 
-      const urls = embeds.reduce((urls, embed, i) => {
-        if (!embed?.image || targetEmbed.url !== embed.url) return urls;
+      const imageURLs = map.get(embed.url) ?? [];
+      map.set(embed.url, imageURLs.concat(embed.image.url));
+    });
 
-        embeds[i] = null;
-        return urls.concat(embed.image.url);
-      }, [] as string[]);
-
-      return urls.length ? chunks.concat([urls]) : chunks;
-    }, [] as string[][]);
+    return map;
   }
 }

@@ -31,15 +31,15 @@ class PostedPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
             || this.oldMessage && this.message.editedAt && channel.lastMessageId !== this.message.id
             || this.oldMessage && this.containsSomePictures(this.oldMessage))
             return null;
-        const imageURLsChunks = this.collectImageURLsChunks(this.message);
-        if (!imageURLsChunks.some(urls => urls.length > 1))
+        const imageURLsMap = this.collectImageURLsMap(this.message);
+        if (!imageURLsMap.some(urls => urls.length > 1))
             return null;
         PostedPicturesJob.entryRespondedMessage(this.message);
-        return await this.sendController(imageURLsChunks.flat().length);
+        return await this.sendController([...imageURLsMap.values()].flat().length);
     }
     containsSomePictures(message) {
-        return this.collectImageURLsChunks(message)
-            .some(urls => urls.length - 1 > 0);
+        return this.collectImageURLsMap(message)
+            .some(urls => urls.length > 1);
     }
     async sendController(imageCount) {
         const message = await this.message.fetch();

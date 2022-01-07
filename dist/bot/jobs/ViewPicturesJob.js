@@ -21,10 +21,10 @@ class ViewPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
         const message = await this.fetchTargetMessage(interaction);
         if (!message)
             return this.replyAsMissingMessage(interaction);
-        const imageURLsChunks = this.collectImageURLsChunks(message);
-        if (!imageURLsChunks.length)
+        const imageURLsMap = this.collectImageURLsMap(message);
+        if (!imageURLsMap.size)
             return this.replyAsMissingImages(interaction);
-        const messagePayloads = this.generateViewingMessagePayloads(imageURLsChunks);
+        const messagePayloads = this.generateViewingMessagePayloads(imageURLsMap);
         const repliedMessage = await interaction.reply({
             content: `${interaction.user}`,
             ...messagePayloads[0],
@@ -46,23 +46,26 @@ class ViewPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
             await this.replyErrorMessage(interaction, '表示する画像が見つかりません')
         ];
     }
-    generateViewingMessagePayloads(imageURLsChunks) {
-        return imageURLsChunks.reduce((messages, urls, i) => {
-            let lastMessage = messages.at(-1);
+    generateViewingMessagePayloads(imageURLsMap) {
+        return [...imageURLsMap].reduce((payloads, pair, i) => {
+            let lastMessage = payloads.at(-1);
+            const [siteURL, imageURLs] = pair;
             if (!lastMessage
                 || !lastMessage.embeds
-                || lastMessage.embeds.length + urls.length > this.embedLengthMax) {
+                || lastMessage.embeds.length + imageURLs.length > this.embedLengthMax) {
                 lastMessage = {};
                 lastMessage.embeds = [];
-                messages.push(lastMessage);
+                payloads.push(lastMessage);
             }
-            const embeds = urls.map((url, page) => ({
+            const embeds = imageURLs.map((imageURL, page) => ({
                 color: this.imageEmbedColors[i],
-                image: { url },
-                footer: { text: `${page + 1}/${urls.length}` },
+                url: page === 0 ? siteURL : undefined,
+                title: page === 0 ? '画像の元ページを開く' : undefined,
+                image: { url: imageURL },
+                footer: { text: `${page + 1}/${imageURLs.length}` },
             }));
             lastMessage.embeds.push(...embeds);
-            return messages;
+            return payloads;
         }, []);
     }
 }
