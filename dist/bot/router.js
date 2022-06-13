@@ -10,9 +10,9 @@ function setupJobs(bot) {
     syncCommands(bot);
     PostedPicturesJob_1.PostedPicturesJob.sweepMessageIds(bot);
     bot
-        .on('messageCreate', message => routeMessage(bot, message))
+        .on('messageCreate', (message) => routeMessage(bot, message))
         .on('messageUpdate', (oldMessage, message) => routeMessage(bot, message, oldMessage))
-        .on('interactionCreate', interaction => routeInteraction(interaction));
+        .on('interactionCreate', (interaction) => routeInteraction(interaction));
 }
 exports.setupJobs = setupJobs;
 const commandData = [

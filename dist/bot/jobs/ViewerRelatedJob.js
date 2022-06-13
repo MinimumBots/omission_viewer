@@ -4,7 +4,7 @@ exports.ViewerRelatedJob = void 0;
 const discord_js_1 = require("discord.js");
 const CommonJob_1 = require("./CommonJob");
 class ViewerRelatedJob extends CommonJob_1.CommonJob {
-    collectImageURLsMap(message) {
+    collectImageUrlsMap(message) {
         const map = new discord_js_1.Collection();
         message.embeds.forEach(embed => {
             if (!embed.url || !embed.image)

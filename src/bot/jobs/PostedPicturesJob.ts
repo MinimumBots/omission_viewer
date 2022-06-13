@@ -40,7 +40,7 @@ export class PostedPicturesJob extends ViewerRelatedJob {
       || this.oldMessage && this.containsSomePictures(this.oldMessage)
     ) return null;
 
-    const imageURLsMap = this.collectImageURLsMap(this.message);
+    const imageURLsMap = this.collectImageUrlsMap(this.message);
     if (!imageURLsMap.some(urls => urls.length > 1)) return null;
 
     PostedPicturesJob.entryRespondedMessage(this.message);
@@ -49,7 +49,7 @@ export class PostedPicturesJob extends ViewerRelatedJob {
   }
 
   private containsSomePictures(message: LaxMessage): boolean {
-    return this.collectImageURLsMap(message)
+    return this.collectImageUrlsMap(message)
       .some(urls => urls.length > 1);
   }
 

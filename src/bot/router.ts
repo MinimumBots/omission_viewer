@@ -19,9 +19,9 @@ export function setupJobs(bot: Client<true>): void {
   PostedPicturesJob.sweepMessageIds(bot);
 
   bot
-    .on('messageCreate', message => routeMessage(bot, message))
+    .on('messageCreate', (message) => routeMessage(bot, message))
     .on('messageUpdate', (oldMessage, message) => routeMessage(bot, message, oldMessage))
-    .on('interactionCreate', interaction => routeInteraction(interaction));
+    .on('interactionCreate', (interaction) => routeInteraction(interaction));
 }
 
 const commandData: ApplicationCommandData[] = [

@@ -1,17 +1,17 @@
 import type { InteractionReplyOptions, Message, MessageOptions } from 'discord.js';
 import type { MessageTriggeredInteraction, ReplyableInteraction } from '../typings';
 
-import { ImageURLsMap, ViewerRelatedJob } from './ViewerRelatedJob';
+import { ImageUrlsMap, ViewerRelatedJob } from './ViewerRelatedJob';
 
 export abstract class ViewPicturesJob extends ViewerRelatedJob {
   protected async sendImages(interaction: MessageTriggeredInteraction<'cached'>): Promise<Message<true>[]> {
     const message = await this.fetchTargetMessage(interaction);
     if (!message) return this.replyAsMissingMessage(interaction);
 
-    const imageURLsMap = this.collectImageURLsMap(message);
-    if (!imageURLsMap.size) return this.replyAsMissingImages(interaction);
+    const imageUrlsMap = this.collectImageUrlsMap(message);
+    if (!imageUrlsMap.size) return this.replyAsMissingImages(interaction);
 
-    const messagePayloads = this.generateViewingMessagePayloads(imageURLsMap);
+    const messagePayloads = this.convertToMessagePayaloads(imageUrlsMap);
 
     const repliedMessage = await interaction.reply({
       content: `${interaction.user}`,
@@ -60,32 +60,19 @@ export abstract class ViewPicturesJob extends ViewerRelatedJob {
 
   private embedLengthMax = 10;
 
-  private generateViewingMessagePayloads(imageURLsMap: ImageURLsMap): (MessageOptions & InteractionReplyOptions)[] {
-    return [...imageURLsMap].reduce((payloads, pair, i) => {
-      let lastMessage = payloads.at(-1);
-      const [siteURL, imageURLs] = pair;
+  private convertToMessagePayaloads(imageUrlsMap: ImageUrlsMap): (MessageOptions & InteractionReplyOptions)[] {
+    return [...imageUrlsMap].reduce((payloads, pair, i) => {
+      const [siteUrl, imageUrls] = pair;
 
-      if (
-        !lastMessage
-        || !lastMessage.embeds
-        || lastMessage.embeds.length + imageURLs.length > this.embedLengthMax
-      ) {
-        lastMessage = {};
-        lastMessage.embeds = [];
-        payloads.push(lastMessage);
-      }
-
-      const embeds = imageURLs.map((imageURL, page) => ({
+      const buildEmbed = (imageURL: string, page: number) => ({
         color: this.imageEmbedColors[i],
-        url: page === 0 ? siteURL : undefined,
+        url: page === 0 ? siteUrl : undefined,
         title: page === 0 ? '画像の元ページを開く' : undefined,
         image: { url: imageURL },
-        footer: { text: `${page + 1}/${imageURLs.length}` },
-      }));
+        footer: { text: `${page + 1}/${imageUrls.length}` },
+      });
 
-      lastMessage.embeds.push(...embeds);
-
-      return payloads;
-    }, [] as (MessageOptions & InteractionReplyOptions)[]);
+      return payloads.concat({ embeds: imageUrls.map(buildEmbed) });
+    }, new Array<MessageOptions & InteractionReplyOptions>());
   }
 }

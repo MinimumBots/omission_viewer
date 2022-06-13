@@ -21,10 +21,10 @@ class ViewPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
         const message = await this.fetchTargetMessage(interaction);
         if (!message)
             return this.replyAsMissingMessage(interaction);
-        const imageURLsMap = this.collectImageURLsMap(message);
-        if (!imageURLsMap.size)
+        const imageUrlsMap = this.collectImageUrlsMap(message);
+        if (!imageUrlsMap.size)
             return this.replyAsMissingImages(interaction);
-        const messagePayloads = this.generateViewingMessagePayloads(imageURLsMap);
+        const messagePayloads = this.convertToMessagePayaloads(imageUrlsMap);
         const repliedMessage = await interaction.reply({
             content: `${interaction.user}`,
             ...messagePayloads[0],
@@ -46,27 +46,18 @@ class ViewPicturesJob extends ViewerRelatedJob_1.ViewerRelatedJob {
             await this.replyErrorMessage(interaction, '表示する画像が見つかりません')
         ];
     }
-    generateViewingMessagePayloads(imageURLsMap) {
-        return [...imageURLsMap].reduce((payloads, pair, i) => {
-            let lastMessage = payloads.at(-1);
-            const [siteURL, imageURLs] = pair;
-            if (!lastMessage
-                || !lastMessage.embeds
-                || lastMessage.embeds.length + imageURLs.length > this.embedLengthMax) {
-                lastMessage = {};
-                lastMessage.embeds = [];
-                payloads.push(lastMessage);
-            }
-            const embeds = imageURLs.map((imageURL, page) => ({
+    convertToMessagePayaloads(imageUrlsMap) {
+        return [...imageUrlsMap].reduce((payloads, pair, i) => {
+            const [siteUrl, imageUrls] = pair;
+            const buildEmbed = (imageURL, page) => ({
                 color: this.imageEmbedColors[i],
-                url: page === 0 ? siteURL : undefined,
+                url: page === 0 ? siteUrl : undefined,
                 title: page === 0 ? '画像の元ページを開く' : undefined,
                 image: { url: imageURL },
-                footer: { text: `${page + 1}/${imageURLs.length}` },
-            }));
-            lastMessage.embeds.push(...embeds);
-            return payloads;
-        }, []);
+                footer: { text: `${page + 1}/${imageUrls.length}` },
+            });
+            return payloads.concat({ embeds: imageUrls.map(buildEmbed) });
+        }, new Array());
     }
 }
 exports.ViewPicturesJob = ViewPicturesJob;
