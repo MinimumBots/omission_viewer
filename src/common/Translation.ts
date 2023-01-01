@@ -1,9 +1,10 @@
-import { Dict, I18n } from 'i18n-js';
+import { I18n } from 'i18n-js';
 import { Settings } from './Settings';
 import { readFileSync } from 'fs';
 import { ResourcePath } from '../constant/ResourcePath';
 import YAML from 'yaml';
 
+import type { Dict } from 'i18n-js';
 import type { TranslateOptions } from 'i18n-js/typings/typing';
 
 export class Translation {

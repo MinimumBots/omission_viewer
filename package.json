@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx sharding dist/index.js",
+    "start": "esharding dist/index.js",
     "dev": "ts-node -r dotenv/config src/index.ts",
     "build": "run-s clean compile",
     "compile": "tsc",
