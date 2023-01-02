@@ -1,2 +1,4 @@
+applicationName: Omission Viewer
+loggingLevel: info  # all, mark, trace, debug, info, warn, error, fatal, off
 locale: ja
 presenceMessage: スマホでツイートの画像をすべて表示

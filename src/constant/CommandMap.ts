@@ -1,5 +1,6 @@
-import { ImplementedCommand } from '../base/ImplementedCommand';
-import { ShowImagesContextMenu } from '../command/ShowImagesContextMenu';
+import { ShowImagesContextMenu } from '../command/ShowImagesContextMenu.js';
+
+import type { ImplementedCommand } from '../base/ImplementedCommand.js';
 
 export const CommandMap: Map<string, ImplementedCommand> = new Map();
 

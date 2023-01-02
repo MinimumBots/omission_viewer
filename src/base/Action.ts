@@ -1,10 +1,12 @@
-import type { Client, ClientEvents } from 'discord.js';
-
-import { ReportableError } from '../error/ReportableError.js';
-import { ReportErrorAction } from './ReportErrorAction.js';
+import { Logger } from '../common/Logger.js';
 import { Service } from '../common/Service.js';
 
+import type { Client, ClientEvents } from 'discord.js';
+
 export abstract class Action<EventName extends keyof ClientEvents> {
+	protected readonly abstract startActionMessage: `Start ${string}.`;
+	protected readonly abstract finishActionMessage: `Finish ${string}.`;
+
 	protected readonly bot: Client<true>;
 
 	protected readonly abstract service: Service;
@@ -14,22 +16,12 @@ export abstract class Action<EventName extends keyof ClientEvents> {
 	}
 
 	public execute(...args: ClientEvents[EventName]): void {
+		Logger.debug(this.startActionMessage);
+
 		this.call(...args)
-			.catch((error) => this.handleError(error));
+			.catch((error) => Logger.error(error, args))
+			.finally(() => Logger.debug(this.finishActionMessage));
 	}
 
 	protected abstract call(...args: ClientEvents[EventName]): Promise<void>;
-
-	protected handleError(error: unknown): void {
-		if (error instanceof ReportableError) {
-			new ReportErrorAction(error).report()
-				.catch(console.error);
-
-			return;
-		}
-
-		if (error instanceof Error) {
-			console.error(error.stack);
-		}
-	}
 }

@@ -1,26 +1,30 @@
-import { Action } from '../base/Action.js';
-import { ReportableError } from '../error/ReportableError.js';
+import { InteractionAction } from '../base/InteractionAction.js';
+import { InteractionError } from '../error/InteractionError.js';
 import { ShowImagesContextMenu } from '../command/ShowImagesContextMenu.js';
 import { ShowImagesService } from '../service/ShowImagesService.js';
 import { TranslateCode } from '../constant/TranslateCode.js';
 
 import type { Interaction } from 'discord.js';
 
-export class ShowImagesContextMenuAction extends Action<'interactionCreate'> {
+export class ShowImagesContextMenuAction extends InteractionAction {
+	protected readonly startActionMessage: `Start ${string}.` = `Start ${ShowImagesContextMenuAction.name}.`;
+	protected readonly finishActionMessage: `Finish ${string}.` = `Finish ${ShowImagesContextMenuAction.name}.`;
+
 	protected readonly service = new ShowImagesService(this.bot);
 
-	private readonly contextMenu =ShowImagesContextMenu.singleton;
+	protected async process(interaction: Interaction): Promise<void> {
+		const contextMenu = ShowImagesContextMenu.singleton;
 
-	protected async call(interaction: Interaction): Promise<void> {
-		if (!interaction.inCachedGuild() || !interaction.isMessageContextMenuCommand() || !this.contextMenu.match(interaction)) {
+		if (!interaction.inCachedGuild() || !interaction.isMessageContextMenuCommand() || !contextMenu.match(interaction)) {
 			return;
 		}
 
-		const payloads = this.service.makeReplyPayloads(interaction.targetMessage);
-		if (!payloads.length) {
-			throw new ReportableError({ target: interaction, transPhrase: TranslateCode.E0000002 });
+		const targetMessage = interaction.targetMessage;
+		if (!this.service.isShowable(targetMessage)) {
+			throw new InteractionError({ transPhrase: TranslateCode.E0000001 });
 		}
 
+		const payloads = this.service.makeReplyPayloads(targetMessage, interaction.locale);
 		await this.service.sendPayloads(interaction, payloads);
 
 		return;

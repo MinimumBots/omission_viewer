@@ -16,7 +16,7 @@ i18n.configure({
 	staticCatalog: catalog
 });
 
-export class Translation {
+export class Translate {
 	public static do(phrase: string, replacements?: Replacements, locale?: string): string {
 		return i18n.__({ phrase, locale: locale ?? Settings.locale }, replacements ?? {});
 	}

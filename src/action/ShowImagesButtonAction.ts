@@ -1,31 +1,29 @@
-import { Action } from '../base/Action.js';
+import { InteractionAction } from '../base/InteractionAction.js';
 import { ShowImagesComponent } from '../component/ShowImagesComponent.js';
 import { ShowImagesService } from '../service/ShowImagesService.js';
 
 import type { Interaction } from 'discord.js';
 
-export class ShowImagesButtonAction extends Action<'interactionCreate'> {
+export class ShowImagesButtonAction extends InteractionAction {
+	protected readonly startActionMessage: `Start ${string}.` = `Start ${ShowImagesButtonAction.name}.`;
+	protected readonly finishActionMessage: `Finish ${string}.` = `Finish ${ShowImagesButtonAction.name}.`;
+
 	protected override readonly service = new ShowImagesService(this.bot);
 
-	private readonly component = ShowImagesComponent.singleton;
+	protected override async process(interaction: Interaction): Promise<void> {
+		const component = ShowImagesComponent.singleton;
 
-	protected override async call(interaction: Interaction): Promise<void> {
-		if (!interaction.inCachedGuild() || !interaction.isButton() || !this.component.match(interaction)) {
+		if (!interaction.inCachedGuild() || !interaction.isButton() || !component.match(interaction)) {
 			return;
 		}
 
 		const replyedMessage = await this.service.fetchReplyedMessage(interaction.message);
-		if (!replyedMessage) {
+		if (!replyedMessage || !this.service.isShowable(replyedMessage)) {
 			await interaction.message.delete();
 			return;
 		}
 
-		const payloads = this.service.makeReplyPayloads(replyedMessage);
-		if (!payloads.length) {
-			await interaction.message.delete();
-			return;
-		}
-
+		const payloads = this.service.makeReplyPayloads(replyedMessage, interaction.locale);
 		await this.service.sendPayloads(interaction, payloads);
 	}
 }

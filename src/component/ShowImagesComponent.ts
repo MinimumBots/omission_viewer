@@ -1,7 +1,7 @@
 import { ButtonBuilder, ButtonStyle } from 'discord.js';
 import { ImplementedComponent } from '../base/ImplementedComponent.js';
 import { TranslateCode } from '../constant/TranslateCode.js';
-import { Translation } from '../common/Translation.js';
+import { Translate } from '../common/Translate.js';
 
 import type { ButtonInteraction } from 'discord.js';
 
@@ -14,7 +14,7 @@ export class ShowImagesComponent extends ImplementedComponent {
 		return new ButtonBuilder()
 			.setStyle(ButtonStyle.Success)
 			.setCustomId(this.customId)
-			.setLabel(Translation.do(TranslateCode.L0000002, { imageCount: `${imageCount}` }, locale));
+			.setLabel(Translate.do(TranslateCode.L0000002, { imageCount: `${imageCount}` }, locale));
 	}
 
 	public override match(interaction: ButtonInteraction): boolean {

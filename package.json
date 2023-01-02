@@ -15,9 +15,10 @@
   "author": "GrapeColor",
   "license": "MIT",
   "dependencies": {
-    "@sapphire/snowflake": "^3.4.0",
+    "@sapphire/snowflake": "*",
     "discord.js": "*",
     "i18n": "*",
+    "log4js": "*",
     "shards-allocater": "github:MinimumBots/shards-allocater#master",
     "yaml": "*"
   },

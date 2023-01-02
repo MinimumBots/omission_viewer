@@ -9,6 +9,16 @@ import type { ImageUrlPair, ImageUrlsMap } from '../common/typing.js';
  */
 export abstract class ImagesCommonService extends Service {
 	/**
+	 * Verifies if the embed contains more than one image.  
+	 * @param message A target message.
+	 * @returns Whether the embed contains more than one image.
+	 */
+	protected containsSomeImages(message: Message | PartialMessage): boolean {
+		return this.collectImageUrlsMap(message)
+			.some(urls => urls.length > 1);
+	}
+
+	/**
 	 * Generates a list of image URLs associated with site URLs from embeds in a message.  
 	 * @param message A source message.
 	 * @returns A map of image URL lists, keyed by site URL.

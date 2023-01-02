@@ -4,11 +4,12 @@ ja:
   L0000002: '{{imageCount}} 枚の画像をすべて表示'
 
   E0000000: 不明なエラー
-  E0000001: メッセージが見つかりませんでした
-  E0000002: 表示する画像が見つかりません
-  E0000003: 操作ボタン以外は削除できません
-  E0000004: 操作ボタンを削除できるのはメッセージの投稿者のみです
+  E0000001: 表示する画像が見つかりません
 
 en-US:
+  L0000000: Open the original page of images
   L0000001: Show all images
-  L0000002: 'Showm all {{imageCount}} images'
+  L0000002: 'Show all {{imageCount}} images'
+
+  E0000000: Unknown Error
+  E0000001: Images not found to show

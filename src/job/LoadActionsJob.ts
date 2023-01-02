@@ -1,20 +1,28 @@
 import { AttachConsoleAction } from '../action/AttachConsoleAction.js';
+import { AttachConsoleRevengeAction } from '../action/AttachConsoleRevengeAction.js';
 import { ShowImagesButtonAction } from '../action/ShowImagesButtonAction.js';
 import { ShowImagesContextMenuAction } from '../action/ShowImagesContextMenuAction.js';
 
-import type { Client } from 'discord.js';
+import type { Action } from '../base/Action.js';
+import type { Client, ClientEvents } from 'discord.js';
 
 export class LoadActionsJob {
 	public static run(bot: Client<true>) {
-		const attachConsoleAction = new AttachConsoleAction(bot);
-		const showImagesContextMenuAction = new ShowImagesContextMenuAction(bot);
-		const showImagesButtonAction = new ShowImagesButtonAction(bot);
+		this.entry(bot, 'messageCreate', [
+			new AttachConsoleAction(bot),
+		]);
 
-		bot
-			.on('messageCreate', (message) => attachConsoleAction.execute(message))
-			.on('interactionCreate', (interaction) => {
-				showImagesContextMenuAction.execute(interaction);
-				showImagesButtonAction.execute(interaction);
-			});
+		this.entry(bot, 'messageUpdate', [
+			new AttachConsoleRevengeAction(bot),
+		]);
+
+		this.entry(bot, 'interactionCreate', [
+			new ShowImagesContextMenuAction(bot),
+			new ShowImagesButtonAction(bot),
+		]);
+	}
+
+	private static entry<EventName extends keyof ClientEvents>(bot: Client<true>, eventName: EventName, actions: Action<EventName>[]) {
+		bot.on(eventName, (...args) => actions.forEach((action) => action.execute(...args)));
 	}
 }
