@@ -1,7 +1,7 @@
 import { ButtonBuilder, ButtonStyle } from 'discord.js';
-import { ImplementedComponent } from '../interface/ImplementedComponent';
-import { TranslateCode } from '../constant/TranslateCode';
-import { Translation } from '../common/Translation';
+import { ImplementedComponent } from '../interface/ImplementedComponent.js';
+import { TranslateCode } from '../constant/TranslateCode.js';
+import { Translation } from '../common/Translation.js';
 
 import type { ButtonInteraction } from 'discord.js';
 

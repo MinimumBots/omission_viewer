@@ -1,7 +1,7 @@
-import { Action } from './Action';
-import { ReportableError } from '../error/ReportableError';
-import { ShowImagesService } from '../service/ShowImagesService';
-import { TranslateCode } from '../constant/TranslateCode';
+import { Action } from './Action.js';
+import { ReportableError } from '../error/ReportableError.js';
+import { ShowImagesService } from '../service/ShowImagesService.js';
+import { TranslateCode } from '../constant/TranslateCode.js';
 
 import type { Interaction } from 'discord.js';
 

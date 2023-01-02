@@ -1,8 +1,8 @@
 import { Collection } from 'discord.js';
-import { Service } from './Service';
+import { Service } from './Service.js';
 
 import type { Embed, Message, PartialMessage } from 'discord.js';
-import type { ImageUrlPair, ImageUrlsMap } from '../common/typing';
+import type { ImageUrlPair, ImageUrlsMap } from '../common/typing.js';
 
 /**
  * Common service for embedded images.  

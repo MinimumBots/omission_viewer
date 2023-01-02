@@ -1,7 +1,7 @@
-import { Action } from './Action';
+import { Action } from './Action.js';
 import { ActionRowBuilder } from 'discord.js';
-import { AttachConsoleService } from '../service/AttachConsoleService';
-import { ShowImagesComponent } from '../component/ShowImagesComponent';
+import { AttachConsoleService } from '../service/AttachConsoleService.js';
+import { ShowImagesComponent } from '../component/ShowImagesComponent.js';
 
 import type { Message, MessageActionRowComponentBuilder } from 'discord.js';
 

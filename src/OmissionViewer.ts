@@ -1,6 +1,6 @@
 import { Client, Partials } from 'discord.js';
-import { LoadActionsJob } from './job/LoadActionsJob';
-import { Settings } from './common/Settings';
+import { LoadActionsJob } from './job/LoadActionsJob.js';
+import { Settings } from './common/Settings.js';
 
 import type { ClientOptions } from 'discord.js';
 
@@ -36,7 +36,7 @@ export class OmissionViewer {
 	}
 
 	private initialize(bot: Client<true>): void {
-		LoadActionsJob.execute(bot);
+		LoadActionsJob.run(bot);
 	}
 
 	/**

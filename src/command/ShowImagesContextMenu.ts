@@ -1,8 +1,8 @@
 import { ApplicationCommandType, ContextMenuCommandBuilder } from 'discord.js';
-import { ImplementedContextMenu } from '../interface/ImplementedContextMenu';
-import { Locales } from '../common/Locales';
-import { TranslateCode } from '../constant/TranslateCode';
-import { Translation } from '../common/Translation';
+import { ImplementedContextMenu } from '../interface/ImplementedContextMenu.js';
+import { Locales } from '../common/Locales.js';
+import { TranslateCode } from '../constant/TranslateCode.js';
+import { Translation } from '../common/Translation.js';
 
 import { ContextMenuCommandInteraction } from 'discord.js';
 

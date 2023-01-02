@@ -2,10 +2,11 @@
   "name": "omission_viewer",
   "version": "0.9.0",
   "description": "",
-  "main": "index.js",
+  "exports": "./dist/index.js",
+  "type": "module",
   "scripts": {
-    "start": "esharding dist/index.js",
-    "dev": "ts-node -r dotenv/config src/index.ts",
+    "start": "sharding dist/main.js",
+    "dev": "ts-node -r dotenv/config src/main.ts",
     "build": "run-s clean compile",
     "compile": "tsc",
     "clean": "rimraf ./dist"
@@ -26,5 +27,8 @@
     "rimraf": "*",
     "ts-node": "*",
     "typescript": "*"
+  },
+  "engines": {
+    "node": ">=16.9.0"
   }
 }

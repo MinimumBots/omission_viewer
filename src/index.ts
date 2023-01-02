@@ -1,3 +1,1 @@
-import { OmissionViewer } from './OmissionViewer';
-
-new OmissionViewer().wakeup();
+export { OmissionViewer } from './OmissionViewer.js';

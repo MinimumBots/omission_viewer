@@ -1,11 +1,11 @@
-import { AttachConsoleAction } from '../action/AttachConsoleAction';
-import { ShowImagesButtonAction } from '../action/ShowImagesButtonAction';
-import { ShowImagesCommandAction } from '../action/ShowImagesCommandAction';
+import { AttachConsoleAction } from '../action/AttachConsoleAction.js';
+import { ShowImagesButtonAction } from '../action/ShowImagesButtonAction.js';
+import { ShowImagesCommandAction } from '../action/ShowImagesCommandAction.js';
 
 import type { Client } from 'discord.js';
 
 export class LoadActionsJob {
-	public static execute(bot: Client<true>) {
+	public static run(bot: Client<true>) {
 		bot
 			.on('messageCreate', new AttachConsoleAction(bot).execute)
 			.on('interactionCreate', new ShowImagesCommandAction(bot).execute)

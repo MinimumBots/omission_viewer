@@ -1,6 +1,6 @@
-import { Action } from './Action';
-import { ShowImagesComponent } from '../component/ShowImagesComponent';
-import { ShowImagesService } from '../service/ShowImagesService';
+import { Action } from './Action.js';
+import { ShowImagesComponent } from '../component/ShowImagesComponent.js';
+import { ShowImagesService } from '../service/ShowImagesService.js';
 
 import type { Interaction } from 'discord.js';
 

@@ -1,5 +1,7 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pathResolver = (filename: string) => path.resolve(__dirname, `../../resource/${filename}`);
 
 export class ResourcePath {

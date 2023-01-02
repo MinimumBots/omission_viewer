@@ -1,7 +1,7 @@
 import { bold, Message } from 'discord.js';
-import { Translation } from '../common/Translation';
+import { Translation } from '../common/Translation.js';
 
-import type { ReportableError } from '../error/ReportableError';
+import type { ReportableError } from '../error/ReportableError.js';
 
 export class ReportErrorAction {
 	public constructor(

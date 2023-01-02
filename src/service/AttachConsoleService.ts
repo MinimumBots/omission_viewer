@@ -1,4 +1,4 @@
-import { ImagesCommonService } from './ImagesCommonService';
+import { ImagesCommonService } from './ImagesCommonService.js';
 
 import type { Message, PartialMessage, Snowflake } from 'discord.js';
 

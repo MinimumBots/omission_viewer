@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { ResourcePath } from '../constant/ResourcePath';
+import { ResourcePath } from '../constant/ResourcePath.js';
 import YAML from 'yaml';
 
 export class Settings {
