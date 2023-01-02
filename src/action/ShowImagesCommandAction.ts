@@ -1,7 +1,7 @@
-import { TranslateCode } from '../constant/TranslateCode';
+import { Action } from './Action';
 import { ReportableError } from '../error/ReportableError';
 import { ShowImagesService } from '../service/ShowImagesService';
-import { Action } from './Action';
+import { TranslateCode } from '../constant/TranslateCode';
 
 import type { Interaction } from 'discord.js';
 

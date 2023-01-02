@@ -1,7 +1,8 @@
-import { Interaction } from 'discord.js';
+import { Action } from './Action';
 import { ShowImagesComponent } from '../component/ShowImagesComponent';
 import { ShowImagesService } from '../service/ShowImagesService';
-import { Action } from './Action';
+
+import type { Interaction } from 'discord.js';
 
 export class ShowImagesButtonAction extends Action<'interactionCreate'> {
 	protected override readonly service = new ShowImagesService(this.bot);

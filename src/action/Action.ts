@@ -1,8 +1,8 @@
 import type { Client, ClientEvents } from 'discord.js';
 
 import { ReportableError } from '../error/ReportableError';
-import { Service } from '../service/Service';
 import { ReportErrorAction } from './ReportErrorAction';
+import { Service } from '../service/Service';
 
 export abstract class Action<EventName extends keyof ClientEvents> {
 	protected readonly bot: Client<true>;

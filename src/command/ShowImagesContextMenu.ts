@@ -1,8 +1,10 @@
-import { ContextMenuCommandBuilder, ContextMenuCommandInteraction, ApplicationCommandType, LocalizationMap } from 'discord.js';
-import { Translation } from '../common/Translation';
+import { ApplicationCommandType, ContextMenuCommandBuilder } from 'discord.js';
+import { ImplementedContextMenu } from '../interface/ImplementedContextMenu';
 import { Locales } from '../common/Locales';
 import { TranslateCode } from '../constant/TranslateCode';
-import { ImplementedContextMenu } from '../interface/ImplementedContextMenu';
+import { Translation } from '../common/Translation';
+
+import { ContextMenuCommandInteraction } from 'discord.js';
 
 export class ShowImagesContextMenu extends ImplementedContextMenu {
 	protected override readonly name: string = ShowImagesContextMenu.name;

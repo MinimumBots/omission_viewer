@@ -1,6 +1,8 @@
-import { Client, ClientOptions, Partials } from 'discord.js';
-import { Settings } from './common/Settings';
+import { Client, Partials } from 'discord.js';
 import { LoadActionsJob } from './job/LoadActionsJob';
+import { Settings } from './common/Settings';
+
+import type { ClientOptions } from 'discord.js';
 
 export class OmissionViewer {
 	private static readonly clientOptions: ClientOptions = {

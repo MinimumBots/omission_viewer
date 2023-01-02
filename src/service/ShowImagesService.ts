@@ -1,7 +1,7 @@
 import { hyperlink, MessageType } from 'discord.js';
 import { ImagesCommonService } from './ImagesCommonService';
-import { Translation } from '../common/Translation';
 import { TranslateCode } from '../constant/TranslateCode';
+import { Translation } from '../common/Translation';
 
 import type { Message, RepliableInteraction } from 'discord.js';
 import type { ImageUrlPair, ImageUrlsMap, ReplyPayload } from '../common/typing';

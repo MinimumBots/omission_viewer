@@ -1,7 +1,7 @@
 import { I18n } from 'i18n-js';
-import { Settings } from './Settings';
 import { readFileSync } from 'fs';
 import { ResourcePath } from '../constant/ResourcePath';
+import { Settings } from './Settings';
 import YAML from 'yaml';
 
 import type { Dict } from 'i18n-js';

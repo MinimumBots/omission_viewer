@@ -1,4 +1,4 @@
-import { Client } from 'discord.js';
+import type { Client } from 'discord.js';
 
 export abstract class Service {
   protected bot: Client<true>;

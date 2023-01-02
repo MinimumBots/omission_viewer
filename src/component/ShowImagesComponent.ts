@@ -1,7 +1,9 @@
-import { ButtonBuilder, ButtonInteraction, ButtonStyle } from 'discord.js';
+import { ButtonBuilder, ButtonStyle } from 'discord.js';
 import { ImplementedComponent } from '../interface/ImplementedComponent';
-import { Translation } from '../common/Translation';
 import { TranslateCode } from '../constant/TranslateCode';
+import { Translation } from '../common/Translation';
+
+import type { ButtonInteraction } from 'discord.js';
 
 export class ShowImagesComponent extends ImplementedComponent {
 	protected override readonly customId = ShowImagesComponent.name;
