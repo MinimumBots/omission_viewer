@@ -9,7 +9,9 @@
     "dev": "ts-node -r dotenv/config src/main.ts",
     "build": "run-s clean compile",
     "compile": "tsc",
-    "clean": "rimraf ./dist"
+    "clean": "rimraf ./dist",
+    "test": "run-s test:typescript",
+    "test:typescript": "tsc --noEmit"
   },
   "keywords": [],
   "author": "GrapeColor",
