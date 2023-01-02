@@ -31,6 +31,7 @@ const emptyLocaleMap: Record<LocaleString, string> = {
 	tr: '',
 	uk: '',
 	vi: '',
+	id: '',
 };
 
 export class Locales {
