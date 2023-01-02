@@ -1,10 +1,11 @@
 FROM node:16
 
-WORKDIR /app/omission_viewer
+WORKDIR /app/omission-viewer
 
 COPY package*.json ./
 RUN [ "npm", "ci", "--production" ]
 
-COPY . .
+COPY ./dist ./dist
+COPY ./resource ./resource
 
-CMD [ "node", "dist/main.js" ]
+CMD [ "npm", "start" ]
