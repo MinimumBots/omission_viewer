@@ -7,4 +7,5 @@ const pathResolver = (filename: string) => path.resolve(__dirname, `../../resour
 export class ResourcePath {
   public static readonly settings: string = pathResolver('settings.yml');
   public static readonly translate: string = pathResolver('translate.yml');
+  public static readonly command: string = pathResolver('command.yml');
 }

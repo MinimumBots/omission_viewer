@@ -2,7 +2,7 @@ import type { Client, ClientEvents } from 'discord.js';
 
 import { ReportableError } from '../error/ReportableError.js';
 import { ReportErrorAction } from './ReportErrorAction.js';
-import { Service } from '../service/Service.js';
+import { Service } from '../common/Service.js';
 
 export abstract class Action<EventName extends keyof ClientEvents> {
 	protected readonly bot: Client<true>;
@@ -15,7 +15,7 @@ export abstract class Action<EventName extends keyof ClientEvents> {
 
 	public execute(...args: ClientEvents[EventName]): void {
 		this.call(...args)
-			.catch(this.handleError);
+			.catch((error) => this.handleError(error));
 	}
 
 	protected abstract call(...args: ClientEvents[EventName]): Promise<void>;

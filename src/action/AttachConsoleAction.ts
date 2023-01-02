@@ -1,4 +1,4 @@
-import { Action } from './Action.js';
+import { Action } from '../base/Action.js';
 import { ActionRowBuilder } from 'discord.js';
 import { AttachConsoleService } from '../service/AttachConsoleService.js';
 import { ShowImagesComponent } from '../component/ShowImagesComponent.js';
@@ -8,7 +8,7 @@ import type { Message, MessageActionRowComponentBuilder } from 'discord.js';
 export class AttachConsoleAction extends Action<'messageCreate'> {
 	protected readonly service = new AttachConsoleService(this.bot);
 
-	private readonly component = new ShowImagesComponent();
+	private readonly component = ShowImagesComponent.singleton;
 
 	protected async call(message: Message<true>): Promise<void> {
 		if (!this.service.isAttachable(message)) {

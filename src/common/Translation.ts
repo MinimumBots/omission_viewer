@@ -1,20 +1,23 @@
-import { I18n } from 'i18n-js';
+import i18n from 'i18n';
 import { readFileSync } from 'fs';
 import { ResourcePath } from '../constant/ResourcePath.js';
 import { Settings } from './Settings.js';
 import YAML from 'yaml';
 
-import type { Dict } from 'i18n-js';
-import type { TranslateOptions } from 'i18n-js/typings/typing.js';
+import type { GlobalCatalog, Replacements } from 'i18n';
+
+const catalog: GlobalCatalog = YAML.parse(readFileSync(ResourcePath.translate, 'utf-8'));
+
+i18n.configure({
+	locales: ['ja', 'en-US'],
+	defaultLocale: 'en-US',
+	retryInDefaultLocale: true,
+	updateFiles: false,
+	staticCatalog: catalog
+});
 
 export class Translation {
-	private static readonly dict: Dict = YAML.parse(readFileSync(ResourcePath.translate, 'utf-8'));
-
-	public static do(scope: string, options?: TranslateOptions, locale?: string): string {
-		const translator: I18n = new I18n(this.dict, { defaultLocale: 'en-US' });
-
-		translator.locale = locale ?? Settings.locale;
-
-		return translator.t(scope, options);
+	public static do(phrase: string, replacements?: Replacements, locale?: string): string {
+		return i18n.__({ phrase, locale: locale ?? Settings.locale }, replacements ?? {});
 	}
 }

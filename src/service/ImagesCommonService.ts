@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import { Service } from './Service.js';
+import { Service } from '../common/Service.js';
 
 import type { Embed, Message, PartialMessage } from 'discord.js';
 import type { ImageUrlPair, ImageUrlsMap } from '../common/typing.js';
@@ -14,7 +14,10 @@ export abstract class ImagesCommonService extends Service {
 	 * @returns A map of image URL lists, keyed by site URL.
 	 */
 	protected collectImageUrlsMap(message: Message | PartialMessage): ImageUrlsMap {
-		return message.embeds.reduce(this.bindImageUrl, new Collection<ImageUrlPair[0], ImageUrlPair[1]>());
+		return message.embeds.reduce(
+			(urlsMap, embed) => this.bindImageUrl(urlsMap, embed),
+			new Collection<ImageUrlPair[0], ImageUrlPair[1]>()
+		);
 	}
 
 	/**

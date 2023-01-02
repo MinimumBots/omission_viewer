@@ -25,14 +25,14 @@ export class OmissionViewer {
 	 * Wakeup the bot.
 	 */
 	public wakeup(): void {
-		this.bot.on('ready', this.initialize);
+		this.bot.on('ready', (bot) => this.initialize(bot));
 
 		this.bot.login()
 			.catch(console.error);
 
 		process
-			.on('SIGTERM', this.terminate)
-			.on('SIGINT', this.terminate);
+			.on('SIGTERM', () => this.terminate())
+			.on('SIGINT', () => this.terminate());
 	}
 
 	private initialize(bot: Client<true>): void {

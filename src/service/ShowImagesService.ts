@@ -23,11 +23,14 @@ export class ShowImagesService extends ImagesCommonService {
 
 	public async sendPayloads(interaction: RepliableInteraction, payloads: ReplyPayload[]): Promise<void> {
 		await interaction.reply(payloads[0]);
-		await Promise.all(payloads.slice(1).map(interaction.followUp));
+		await Promise.all(payloads.slice(1).map((payload) => interaction.followUp(payload)));
 	}
 
 	private convertToPayloads(imageUrlsMap: ImageUrlsMap): ReplyPayload[] {
-		return [...imageUrlsMap].reduce(this.imageUrlsToPayload, new Array<ReplyPayload>());
+		return [...imageUrlsMap].reduce(
+			(payloads, imageUrlPair) => this.imageUrlsToPayload(payloads, imageUrlPair),
+			new Array<ReplyPayload>()
+		);
 	}
 
 	private imageUrlsToPayload(payloads: ReplyPayload[], imageUrlPair: ImageUrlPair): ReplyPayload[] {

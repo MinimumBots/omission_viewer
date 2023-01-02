@@ -9,8 +9,8 @@ export class ReportErrorAction {
 	) {}
 
 	public report(): Promise<Message> {
-		const { target, transScope, transOptions } = this.error.option;
-		const sentence = Translation.do(transScope, transOptions ?? {});
+		const { target, transPhrase, transReplacements } = this.error.option;
+		const sentence = Translation.do(transPhrase, transReplacements ?? {});
 
 		if (target instanceof Message) {
 			return target.reply({ content: `⚠️ ${bold(sentence)}` });

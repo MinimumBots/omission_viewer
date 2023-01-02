@@ -15,12 +15,14 @@
   "author": "GrapeColor",
   "license": "MIT",
   "dependencies": {
+    "@sapphire/snowflake": "^3.4.0",
     "discord.js": "*",
-    "i18n-js": "*",
+    "i18n": "*",
     "shards-allocater": "github:MinimumBots/shards-allocater#master",
     "yaml": "*"
   },
   "devDependencies": {
+    "@types/i18n": "*",
     "@types/node": "*",
     "dotenv": "*",
     "npm-run-all": "*",

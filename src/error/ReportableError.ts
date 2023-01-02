@@ -1,4 +1,4 @@
-import type { ReportableErrorOptions } from '../interface/ReportableErrorOptions.js';
+import type { ReportableErrorOptions } from '../base/ReportableErrorOptions.js';
 
 /**
  * The exception representing a reportable error.
