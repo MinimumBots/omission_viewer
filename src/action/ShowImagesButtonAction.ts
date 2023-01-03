@@ -23,7 +23,7 @@ export class ShowImagesButtonAction extends InteractionAction {
 			return;
 		}
 
-		const payloads = this.service.makeReplyPayloads(replyedMessage, interaction.locale);
+		const payloads = this.service.buildReplyPayloads(replyedMessage, interaction.locale);
 		await this.service.sendPayloads(interaction, payloads);
 	}
 }

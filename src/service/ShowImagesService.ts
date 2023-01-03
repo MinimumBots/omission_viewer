@@ -25,7 +25,7 @@ export class ShowImagesService extends ImagesCommonService {
 		return this.containsSomeImages(message);
 	}
 
-	public makeReplyPayloads(message: Message<true>, locale: string): ReplyPayload[] {
+	public buildReplyPayloads(message: Message<true>, locale: string): ReplyPayload[] {
 		return this.convertToPayloads(this.collectImageUrlsMap(message), locale);
 	}
 
@@ -42,13 +42,18 @@ export class ShowImagesService extends ImagesCommonService {
 	}
 
 	private imageUrlsToPayload(payloads: ReplyPayload[], imageUrlPair: ImageUrlPair, locale: string): ReplyPayload[] {
-		const [siteUrl, imageUrls] = imageUrlPair;
-
 		return payloads.concat({
-			content: hyperlink(Translate.do(TranslateCode.L0000000, {}, locale), hideLinkEmbed(siteUrl)),
-			files: imageUrls,
+			content: this.buildContent(imageUrlPair, locale),
 			ephemeral: true,
 			fetchReply: true,
 		});
+	}
+
+	private buildContent(imageUrlPair: ImageUrlPair, locale: string): string {
+		const [siteUrl, imageUrls] = imageUrlPair;
+		const siteLink = hyperlink(Translate.do(TranslateCode.M0000000, {}, locale), hideLinkEmbed(siteUrl));
+		const imageLinks = imageUrls.map((imageUrl) => hyperlink('\u200C', imageUrl));
+
+		return [siteLink, ...imageLinks].join(' ');
 	}
 }

@@ -19,12 +19,11 @@ export class ShowImagesContextMenuAction extends InteractionAction {
 			return;
 		}
 
-		const targetMessage = interaction.targetMessage;
-		if (!this.service.isShowable(targetMessage)) {
+		const payloads = this.service.buildReplyPayloads(interaction.targetMessage, interaction.locale);
+		if (payloads.length < 1) {
 			throw new InteractionError({ transPhrase: TranslateCode.E0000001 });
 		}
 
-		const payloads = this.service.makeReplyPayloads(targetMessage, interaction.locale);
 		await this.service.sendPayloads(interaction, payloads);
 
 		return;

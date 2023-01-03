@@ -1,4 +1,4 @@
-import { Client, Partials } from 'discord.js';
+import { Client, Options, Partials } from 'discord.js';
 import { LoadActionsJob } from './job/LoadActionsJob.js';
 import { Logger } from './common/Logger.js';
 import { Settings } from './common/Settings.js';
@@ -7,8 +7,12 @@ import { SyncGlobalCommandsJob } from './job/SyncGlobalCommandsJob.js';
 import type { ClientOptions } from 'discord.js';
 
 export class OmissionViewer {
-	private static readonly clientOptions: ClientOptions = {
-		intents: ['Guilds', 'GuildMessages', 'MessageContent'],
+	private readonly cacheFactory = Options.cacheWithLimits({
+		MessageManager: 50,
+	});
+
+	private readonly clientOptions: ClientOptions = {
+		makeCache: this.cacheFactory,
 		partials: [
 			Partials.Channel,
 			Partials.GuildMember,
@@ -20,10 +24,12 @@ export class OmissionViewer {
 		],
 		failIfNotExists: false,
 		presence: { activities: [{ name: Settings.presenceMessage }] },
+		intents: ['Guilds', 'GuildMessages', 'MessageContent'],
 	}
 
-	private readonly bot = new Client(OmissionViewer.clientOptions)
+	private readonly bot = new Client(this.clientOptions)
 		.on('ready', async (bot) => await this.runJobs(bot))
+		.on('ready', (bot) => Logger.info(`Fetched ${bot.guilds.cache.size} guilds, and ${bot.channels.cache.size} channels.`))
 		.on('shardReady', (shardId) => Logger.info(`No.${shardId} shard is ready.`))
 		.on('debug', (debug) => Logger.debug(debug))
 		.on('warn', (warn) => Logger.warn(warn))
