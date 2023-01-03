@@ -63,4 +63,3 @@ echo "----------------------------------------------------------------"
 sudo systemctl daemon-reload
 sudo systemctl enable weekly_reboots.timer
 echo "----------------------------------------------------------------"
-
