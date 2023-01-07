@@ -19,7 +19,7 @@ export abstract class InteractionAction extends Action<'interactionCreate'> {
 
 			if (interaction.isRepliable()) {
 				interactionError ??= new InteractionError({
-					transPhrase: TranslateCode.E0000000,
+					transPhrase: TranslateCode.ERR00001,
 					transLocale: interaction.locale,
 				});
 				interactionError.option.target = interaction;
