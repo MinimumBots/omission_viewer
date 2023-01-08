@@ -4,16 +4,16 @@ import { AttachConsoleService } from '../service/AttachConsoleService.js';
 import type { Message, PartialMessage } from 'discord.js';
 
 export class AttachConsoleRevengeAction extends Action<'messageUpdate'> {
-	protected readonly startActionMessage: `Start ${string}.` = `Start ${AttachConsoleRevengeAction.name}.`;
-	protected readonly finishActionMessage: `Finish ${string}.` = `Finish ${AttachConsoleRevengeAction.name}.`;
+	protected override readonly service = new AttachConsoleService(this.bot);
 
-	protected service = new AttachConsoleService(this.bot);
+	protected override readonly startActionMessage: `Start ${string}.` = `Start ${AttachConsoleRevengeAction.name}.`;
+	protected override readonly finishActionMessage: `Finish ${string}.` = `Finish ${AttachConsoleRevengeAction.name}.`;
 
-	protected async call(oldMessage: Message | PartialMessage, newMessage: Message | PartialMessage): Promise<void> {
+	protected override async call(oldMessage: Message | PartialMessage, newMessage: Message | PartialMessage): Promise<any> {
 		if (!this.service.isAttachable(newMessage) || !this.service.isRevengeable(newMessage, oldMessage)) {
 			return;
 		}
 
-		await this.service.attach(newMessage);
+		return this.service.attach(newMessage);
 	}
 }

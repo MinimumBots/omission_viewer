@@ -1,1 +1,2 @@
-export class HopelessError extends Error {}
+export class HopelessError extends Error {
+}

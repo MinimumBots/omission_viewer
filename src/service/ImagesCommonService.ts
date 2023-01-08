@@ -1,5 +1,5 @@
 import { Collection } from 'discord.js';
-import { Service } from '../common/Service.js';
+import { Service } from '../base/Service.js';
 
 import type { Embed, Message, PartialMessage } from 'discord.js';
 

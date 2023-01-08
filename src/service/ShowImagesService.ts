@@ -1,10 +1,10 @@
-import { Collection, hideLinkEmbed, hyperlink, MessageType } from 'discord.js';
+import { hideLinkEmbed, hyperlink, MessageType } from 'discord.js';
 import { ImagesCommonService } from './ImagesCommonService.js';
 import { TranslateCode } from '../constant/TranslateCode.js';
 import { Translate } from '../common/Translate.js';
 
-import type { Message, RepliableInteraction } from 'discord.js';
-import type { ReplyPayload } from '../common/typing';
+import type { Collection, Message, RepliableInteraction } from 'discord.js';
+import type { ReplyPayload } from '../constant/typing';
 
 export class ShowImagesService extends ImagesCommonService {
 	public async fetchReplyedMessage(message: Message<true>): Promise<Message<true> | null> {
@@ -29,9 +29,11 @@ export class ShowImagesService extends ImagesCommonService {
 		return this.convertToPayloads(this.collectImageUrlsMap(message), locale);
 	}
 
-	public async sendPayloads(interaction: RepliableInteraction, payloads: ReplyPayload[]): Promise<void> {
-		await interaction.reply(payloads[0]);
-		await Promise.all(payloads.slice(1).map((payload) => interaction.followUp(payload)));
+	public sendPayloads(interaction: RepliableInteraction, payloads: ReplyPayload[]): Promise<Message[]> {
+		return Promise.all([
+			interaction.reply(payloads[0]),
+			...payloads.slice(1).map((payload) => interaction.followUp(payload))
+		]);
 	}
 
 	private convertToPayloads(imageUrlsMap: Collection<string, string[]>, locale: string): ReplyPayload[] {

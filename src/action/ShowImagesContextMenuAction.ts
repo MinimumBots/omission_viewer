@@ -7,16 +7,16 @@ import { TranslateCode } from '../constant/TranslateCode.js';
 import type { Interaction } from 'discord.js';
 
 export class ShowImagesContextMenuAction extends InteractionAction {
-	protected readonly startActionMessage: `Start ${string}.` = `Start ${ShowImagesContextMenuAction.name}.`;
-	protected readonly finishActionMessage: `Finish ${string}.` = `Finish ${ShowImagesContextMenuAction.name}.`;
+	protected override readonly service = new ShowImagesService(this.bot);
 
-	protected readonly service = new ShowImagesService(this.bot);
+	protected override readonly startActionMessage: `Start ${string}.` = `Start ${ShowImagesContextMenuAction.name}.`;
+	protected override readonly finishActionMessage: `Finish ${string}.` = `Finish ${ShowImagesContextMenuAction.name}.`;
 
-	protected async process(interaction: Interaction): Promise<void> {
+	protected override async process(interaction: Interaction): Promise<object | null> {
 		const contextMenu = ShowImagesContextMenu.singleton;
 
 		if (!interaction.inCachedGuild() || !interaction.isMessageContextMenuCommand() || !contextMenu.match(interaction)) {
-			return;
+			return null;
 		}
 
 		const payloads = this.service.buildReplyPayloads(interaction.targetMessage, interaction.locale);
@@ -24,8 +24,6 @@ export class ShowImagesContextMenuAction extends InteractionAction {
 			throw new InteractionError({ transPhrase: TranslateCode.ERR00002 });
 		}
 
-		await this.service.sendPayloads(interaction, payloads);
-
-		return;
+		return this.service.sendPayloads(interaction, payloads);
 	}
 }

@@ -4,7 +4,7 @@ import { Locales } from '../common/Locales.js';
 import { TranslateCode } from '../constant/TranslateCode.js';
 import { Translate } from '../common/Translate.js';
 
-import { ContextMenuCommandInteraction } from 'discord.js';
+import type { ContextMenuCommandInteraction } from 'discord.js';
 
 export class ShowImagesContextMenu extends ImplementedContextMenu {
 	public static readonly singleton = new this();

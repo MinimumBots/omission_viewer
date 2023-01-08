@@ -1,15 +1,14 @@
 import { Action } from './Action.js';
 import { InteractionError } from '../error/InteractionError.js';
+import { InteractionErrorReporter } from '../common/InteractionErrorReporter.js';
+import { TranslateCode } from '../constant/TranslateCode.js';
 
 import type { Interaction } from 'discord.js'
-import { TranslateCode } from '../constant/TranslateCode.js';
-import { ReportInteractionError } from '../common/ReportInteractionError.js';
-import { Logger } from '../common/Logger.js';
 
 export abstract class InteractionAction extends Action<'interactionCreate'> {
-	protected override async call(interaction: Interaction): Promise<void> {
+	protected override call(interaction: Interaction): Promise<object | null> {
 		try {
-			await this.process(interaction);
+			return this.process(interaction);
 		} catch (error: unknown) {
 			let interactionError: InteractionError;
 
@@ -24,14 +23,12 @@ export abstract class InteractionAction extends Action<'interactionCreate'> {
 				});
 				interactionError.option.target = interaction;
 
-				await new ReportInteractionError(interactionError).report();
+				return new InteractionErrorReporter(interactionError).report();
 			}
 
-			if (!(error instanceof InteractionError)) {
-				throw error;
-			}
+			throw error;
 		}
 	}
 
-	protected abstract process(interaction: Interaction): Promise<void>
+	protected abstract process(interaction: Interaction): Promise<object | null>;
 }

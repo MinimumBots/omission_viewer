@@ -4,16 +4,16 @@ import { AttachConsoleService } from '../service/AttachConsoleService.js';
 import type { Message } from 'discord.js';
 
 export class AttachConsoleAction extends Action<'messageCreate'> {
-	protected readonly startActionMessage: `Start ${string}.` = `Start ${AttachConsoleAction.name}.`;
-	protected readonly finishActionMessage: `Finish ${string}.` = `Finish ${AttachConsoleAction.name}.`;
+	protected override readonly service = new AttachConsoleService(this.bot);
 
-	protected readonly service = new AttachConsoleService(this.bot);
+	protected override readonly startActionMessage: `Start ${string}.` = `Start ${AttachConsoleAction.name}.`;
+	protected override readonly finishActionMessage: `Finish ${string}.` = `Finish ${AttachConsoleAction.name}.`;
 
-	protected async call(message: Message<true>): Promise<void> {
+	protected override async call(message: Message<true>): Promise<object | null> {
 		if (!this.service.isAttachable(message)) {
-			return;
+			return null;
 		}
 
-		await this.service.attach(message);
+		return this.service.attach(message);
 	}
 }
