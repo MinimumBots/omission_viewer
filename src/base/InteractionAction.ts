@@ -6,9 +6,9 @@ import { TranslateCode } from '../constant/TranslateCode.js';
 import type { Interaction } from 'discord.js'
 
 export abstract class InteractionAction extends Action<'interactionCreate'> {
-	protected override call(interaction: Interaction): Promise<object | null> {
+	protected override async call(interaction: Interaction): Promise<object | null> {
 		try {
-			return this.process(interaction);
+			return await this.process(interaction);
 		} catch (error: unknown) {
 			let interactionError: InteractionError;
 

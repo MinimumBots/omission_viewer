@@ -9,9 +9,6 @@ import type { Interaction } from 'discord.js';
 export class ShowImagesContextMenuAction extends InteractionAction {
 	protected override readonly service = new ShowImagesService(this.bot);
 
-	protected override readonly startActionMessage: `Start ${string}.` = `Start ${ShowImagesContextMenuAction.name}.`;
-	protected override readonly finishActionMessage: `Finish ${string}.` = `Finish ${ShowImagesContextMenuAction.name}.`;
-
 	protected override async process(interaction: Interaction): Promise<object | null> {
 		const contextMenu = ShowImagesContextMenu.singleton;
 
