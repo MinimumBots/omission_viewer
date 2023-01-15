@@ -1,11 +1,11 @@
 import { CommandMap } from '../constant/CommandMap.js';
 import { DiscordSnowflake } from '@sapphire/snowflake';
+import { Logger } from '../common/Logger.js';
 import { readFileSync } from 'fs';
 import { ResourcePath } from '../constant/ResourcePath.js';
 import YAML from 'yaml';
 
 import type { ApplicationCommand, ApplicationCommandManager, Client, Collection } from 'discord.js';
-import { Logger } from '../common/Logger.js';
 
 export class SyncGlobalCommandsJob {
 	private static readonly commandResource = YAML.parse(readFileSync(ResourcePath.command, 'utf-8'));
