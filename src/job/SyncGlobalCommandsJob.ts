@@ -1,10 +1,11 @@
+import { CommandMap } from '../constant/CommandMap.js';
 import { DiscordSnowflake } from '@sapphire/snowflake';
+import { Logger } from '../common/Logger.js';
 import { readFileSync } from 'fs';
 import { ResourcePath } from '../constant/ResourcePath.js';
 import YAML from 'yaml';
 
 import type { ApplicationCommand, ApplicationCommandManager, Client, Collection } from 'discord.js';
-import { CommandMap } from '../constant/CommandMap.js';
 
 export class SyncGlobalCommandsJob {
 	private static readonly commandResource = YAML.parse(readFileSync(ResourcePath.command, 'utf-8'));
@@ -42,7 +43,7 @@ export class SyncGlobalCommandsJob {
 	}
 
 	private static update(commands: Collection<string, ApplicationCommand>): Promise<void>[] {
-		return commands.map((command) => this.editCommand(command));
+		return commands.map((command) => this.updateCommand(command));
 	}
 
 	private static create(manager: ApplicationCommandManager, commandNames: string[]): Promise<void>[] {
@@ -51,23 +52,33 @@ export class SyncGlobalCommandsJob {
 
 	private static async removeCommand(command: ApplicationCommand): Promise<void> {
 		await command.delete();
+
+		Logger.info(`Removed command "${command.name}".`);
 	}
 
-	private static async editCommand(command: ApplicationCommand): Promise<void> {
-		const implementedCommand = CommandMap.get(command.name);
+	private static async updateCommand(command: ApplicationCommand): Promise<void> {
+		const implementedCommand = CommandMap[command.name];
+
 		if (implementedCommand === undefined) {
+			Logger.warn(`Tried to update the command, but "${command.name}" is not in the "CommandMap".`);
 			return;
 		}
 
 		await command.edit(implementedCommand.builder);
+
+		Logger.info(`Updated command "${command.name}".`);
 	}
 
 	private static async createCommand(manager: ApplicationCommandManager, commandName: string): Promise<void> {
-		const implementedCommand = CommandMap.get(commandName);
+		const implementedCommand = CommandMap[commandName];
+
 		if (implementedCommand === undefined) {
+			Logger.warn(`Tried to create the command, but "${commandName}" is not in the "CommandMap".`);
 			return;
 		}
 
 		await manager.create(implementedCommand.builder);
+
+		Logger.info(`Created command "${commandName}".`);
 	}
 }

@@ -14,7 +14,7 @@ export class ShowImagesComponent extends ImplementedComponent {
 		return new ButtonBuilder()
 			.setStyle(ButtonStyle.Success)
 			.setCustomId(this.customId)
-			.setLabel(Translate.do(TranslateCode.M0000002, { imageCount: `${imageCount}` }, locale));
+			.setLabel(Translate.do(TranslateCode.BTN00001, { imageCount: `${imageCount}` }, locale));
 	}
 
 	public override match(interaction: ButtonInteraction): boolean {

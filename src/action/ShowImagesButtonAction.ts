@@ -5,25 +5,22 @@ import { ShowImagesService } from '../service/ShowImagesService.js';
 import type { Interaction } from 'discord.js';
 
 export class ShowImagesButtonAction extends InteractionAction {
-	protected readonly startActionMessage: `Start ${string}.` = `Start ${ShowImagesButtonAction.name}.`;
-	protected readonly finishActionMessage: `Finish ${string}.` = `Finish ${ShowImagesButtonAction.name}.`;
-
 	protected override readonly service = new ShowImagesService(this.bot);
 
-	protected override async process(interaction: Interaction): Promise<void> {
+	protected override async process(interaction: Interaction): Promise<object | null> {
 		const component = ShowImagesComponent.singleton;
 
 		if (!interaction.inCachedGuild() || !interaction.isButton() || !component.match(interaction)) {
-			return;
+			return null;
 		}
 
 		const replyedMessage = await this.service.fetchReplyedMessage(interaction.message);
 		if (!replyedMessage || !this.service.isShowable(replyedMessage)) {
 			await interaction.message.delete();
-			return;
+			return null;
 		}
 
 		const payloads = this.service.buildReplyPayloads(replyedMessage, interaction.locale);
-		await this.service.sendPayloads(interaction, payloads);
+		return this.service.sendPayloads(interaction, payloads);
 	}
 }

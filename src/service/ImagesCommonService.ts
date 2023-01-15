@@ -1,8 +1,7 @@
 import { Collection } from 'discord.js';
-import { Service } from '../common/Service.js';
+import { Service } from '../base/Service.js';
 
 import type { Embed, Message, PartialMessage } from 'discord.js';
-import type { ImageUrlPair, ImageUrlsMap } from '../common/typing.js';
 
 /**
  * Common service for embedded images.  
@@ -23,10 +22,10 @@ export abstract class ImagesCommonService extends Service {
 	 * @param message A source message.
 	 * @returns A map of image URL lists, keyed by site URL.
 	 */
-	protected collectImageUrlsMap(message: Message | PartialMessage): ImageUrlsMap {
+	protected collectImageUrlsMap(message: Message | PartialMessage): Collection<string, string[]> {
 		return message.embeds.reduce(
 			(urlsMap, embed) => this.bindImageUrl(urlsMap, embed),
-			new Collection<ImageUrlPair[0], ImageUrlPair[1]>()
+			new Collection<string, string[]>()
 		);
 	}
 
@@ -38,7 +37,7 @@ export abstract class ImagesCommonService extends Service {
 	 * @param embed A embed.
 	 * @returns A image URL map.
 	 */
-	private bindImageUrl(urlsMap: ImageUrlsMap, embed: Embed): ImageUrlsMap {
+	private bindImageUrl(urlsMap: Collection<string, string[]>, embed: Embed): Collection<string, string[]> {
 		return embed.url && embed.image
 			? urlsMap.set(embed.url, (urlsMap.get(embed.url) ?? []).concat(embed.image.url))
 			: urlsMap;

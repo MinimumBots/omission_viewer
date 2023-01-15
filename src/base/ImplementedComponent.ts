@@ -1,5 +1,6 @@
-import type { ComponentBuilder, MessageComponentInteraction } from 'discord.js';
 import { Singleton } from './Singleton.js';
+
+import type { ComponentBuilder, MessageComponentInteraction } from 'discord.js';
 
 export abstract class ImplementedComponent extends Singleton {
 	protected abstract readonly customId: string; 

@@ -1,7 +1,8 @@
+import { ActionRowBuilder } from 'discord.js';
 import { ImagesCommonService } from './ImagesCommonService.js';
-
-import { ActionRowBuilder, Message, MessageActionRowComponentBuilder, PartialMessage, Snowflake } from 'discord.js';
 import { ShowImagesComponent } from '../component/ShowImagesComponent.js';
+
+import type { Message, MessageActionRowComponentBuilder, PartialMessage, Snowflake } from 'discord.js';
 
 type ChannelId = Snowflake;
 type MessageId = Snowflake;

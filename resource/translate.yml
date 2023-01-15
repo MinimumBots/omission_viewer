@@ -1,15 +1,19 @@
 ja:
-  M0000000: 画像の元ページを開く
-  M0000001: 画像をすべて表示
-  M0000002: '{{imageCount}} 枚の画像をすべて表示'
+  MSG00001: 画像の元ページを開く
 
-  E0000000: 不明なエラー
-  E0000001: 表示する画像が見つかりません
+  CMD00001: 画像をすべて表示
+
+  BTN00001: '{{imageCount}} 枚の画像をすべて表示'
+
+  ERR00001: 不明なエラー
+  ERR00002: 表示する画像が見つかりません
 
 en-US:
-  M0000000: Open the original page of images
-  M0000001: Show all images
-  M0000002: 'Show all {{imageCount}} images'
+  MSG00001: Open the original page of images
 
-  E0000000: Unknown Error
-  E0000001: Images not found to show
+  CMD00001: Show all images
+
+  BTN00001: 'Show all {{imageCount}} images'
+
+  ERR00001: Unknown Error
+  ERR00002: Images not found to show

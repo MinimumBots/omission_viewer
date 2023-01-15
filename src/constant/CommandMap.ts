@@ -1,7 +1,7 @@
 import { ShowImagesContextMenu } from '../command/ShowImagesContextMenu.js';
 
-import type { ImplementedCommand } from '../base/ImplementedCommand.js';
+import type { ImplementedCommand } from '../constant/typing.js';
 
-export const CommandMap: Map<string, ImplementedCommand> = new Map();
-
-CommandMap.set(ShowImagesContextMenu.name, ShowImagesContextMenu.singleton);
+export const CommandMap: { [k: string]: ImplementedCommand | undefined } = {
+	[ShowImagesContextMenu.name]: ShowImagesContextMenu.singleton,
+};

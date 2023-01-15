@@ -4,7 +4,7 @@ import { Locales } from '../common/Locales.js';
 import { TranslateCode } from '../constant/TranslateCode.js';
 import { Translate } from '../common/Translate.js';
 
-import { ContextMenuCommandInteraction } from 'discord.js';
+import type { ContextMenuCommandInteraction } from 'discord.js';
 
 export class ShowImagesContextMenu extends ImplementedContextMenu {
 	public static readonly singleton = new this();
@@ -12,7 +12,7 @@ export class ShowImagesContextMenu extends ImplementedContextMenu {
 	protected override readonly name: string = ShowImagesContextMenu.name;
 
 	protected override readonly nameLocalizations = Locales.buildLocalizations(
-		(locale) => Translate.do(TranslateCode.M0000001, {}, locale)
+		(locale) => Translate.do(TranslateCode.CMD00001, {}, locale)
 	);
 
 	public override builder = new ContextMenuCommandBuilder()

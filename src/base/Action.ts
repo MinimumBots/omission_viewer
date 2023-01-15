@@ -1,27 +1,25 @@
 import { Logger } from '../common/Logger.js';
-import { Service } from '../common/Service.js';
+import { Service } from '../base/Service.js';
 
 import type { Client, ClientEvents } from 'discord.js';
 
 export abstract class Action<EventName extends keyof ClientEvents> {
-	protected readonly abstract startActionMessage: `Start ${string}.`;
-	protected readonly abstract finishActionMessage: `Finish ${string}.`;
-
-	protected readonly bot: Client<true>;
-
 	protected readonly abstract service: Service;
 
-	public constructor(bot: Client<true>) {
-		this.bot = bot;
+	protected readonly actionName = this.constructor.name;
+
+	public constructor(protected readonly bot: Client<true>) {
 	}
 
 	public execute(...args: ClientEvents[EventName]): void {
-		Logger.debug(this.startActionMessage);
+		Logger.debug(`Start ${this.actionName}.`);
+		Logger.debug(this.actionName, 'received:', args);
 
 		this.call(...args)
-			.catch((error) => Logger.error(error, args))
-			.finally(() => Logger.debug(this.finishActionMessage));
+			.then((response) => Logger.debug(this.actionName, 'responded:', response))
+			.catch((error) => Logger.error(this.actionName, 'threw:', error, '\n\ncaused by:', args))
+			.finally(() => Logger.debug(`Finish ${this.actionName}.`));
 	}
 
-	protected abstract call(...args: ClientEvents[EventName]): Promise<void>;
+	protected abstract call(...args: ClientEvents[EventName]): Promise<object | null>;
 }

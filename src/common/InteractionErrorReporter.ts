@@ -3,14 +3,14 @@ import { Translate } from './Translate.js';
 
 import type { InteractionError } from '../error/InteractionError.js';
 
-export class ReportInteractionError {
+export class InteractionErrorReporter {
 	public constructor(private readonly error: InteractionError) {
 	}
 
-	public async report(): Promise<void> {
+	public async report(): Promise<object | null> {
 		const { target, transPhrase, transReplacements, transLocale } = this.error.option;
 		const sentence = Translate.do(transPhrase, transReplacements ?? {}, transLocale);
 
-		await target?.reply({ content: `⚠️ ${bold(sentence)}`, ephemeral: true });
+		return target?.reply({ content: `⚠️ ${bold(sentence)}`, ephemeral: true, fetchReply: true }) ?? null;
 	}
 }

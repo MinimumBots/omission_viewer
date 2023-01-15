@@ -3,8 +3,8 @@ import { ImagesCommonService } from './ImagesCommonService.js';
 import { TranslateCode } from '../constant/TranslateCode.js';
 import { Translate } from '../common/Translate.js';
 
-import type { Message, RepliableInteraction } from 'discord.js';
-import type { ImageUrlPair, ImageUrlsMap, ReplyPayload } from '../common/typing';
+import type { Collection, Message, RepliableInteraction } from 'discord.js';
+import type { ReplyPayload } from '../constant/typing';
 
 export class ShowImagesService extends ImagesCommonService {
 	public async fetchReplyedMessage(message: Message<true>): Promise<Message<true> | null> {
@@ -29,29 +29,35 @@ export class ShowImagesService extends ImagesCommonService {
 		return this.convertToPayloads(this.collectImageUrlsMap(message), locale);
 	}
 
-	public async sendPayloads(interaction: RepliableInteraction, payloads: ReplyPayload[]): Promise<void> {
-		await interaction.reply(payloads[0]);
-		await Promise.all(payloads.slice(1).map((payload) => interaction.followUp(payload)));
+	public async sendPayloads(interaction: RepliableInteraction, payloads: ReplyPayload[]): Promise<Message[]> {
+		const messages: Message[] = [];
+
+		messages.push(await interaction.reply(payloads[0]));
+
+		for (const payload of payloads.slice(1)) {
+			messages.push(await interaction.followUp(payload));
+		}
+
+		return messages;
 	}
 
-	private convertToPayloads(imageUrlsMap: ImageUrlsMap, locale: string): ReplyPayload[] {
-		return [...imageUrlsMap].reduce(
-			(payloads, imageUrlPair) => this.imageUrlsToPayload(payloads, imageUrlPair, locale),
+	private convertToPayloads(imageUrlsMap: Collection<string, string[]>, locale: string): ReplyPayload[] {
+		return imageUrlsMap.reduce(
+			(payloads, imageUrls, siteUrl) => this.imageUrlsToPayload(payloads, siteUrl, imageUrls, locale),
 			new Array<ReplyPayload>()
 		);
 	}
 
-	private imageUrlsToPayload(payloads: ReplyPayload[], imageUrlPair: ImageUrlPair, locale: string): ReplyPayload[] {
+	private imageUrlsToPayload(payloads: ReplyPayload[], siteUrl: string, imageUrls: string[], locale: string): ReplyPayload[] {
 		return payloads.concat({
-			content: this.buildContent(imageUrlPair, locale),
+			content: this.buildContent(siteUrl, imageUrls, locale),
 			ephemeral: true,
 			fetchReply: true,
 		});
 	}
 
-	private buildContent(imageUrlPair: ImageUrlPair, locale: string): string {
-		const [siteUrl, imageUrls] = imageUrlPair;
-		const siteLink = hyperlink(Translate.do(TranslateCode.M0000000, {}, locale), hideLinkEmbed(siteUrl));
+	private buildContent(siteUrl: string, imageUrls: string[], locale: string): string {
+		const siteLink = hyperlink(Translate.do(TranslateCode.MSG00001, {}, locale), hideLinkEmbed(siteUrl));
 		const imageLinks = imageUrls.map((imageUrl) => hyperlink('\u200C', imageUrl));
 
 		return [siteLink, ...imageLinks].join(' ');
