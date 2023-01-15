@@ -29,11 +29,16 @@ export class ShowImagesService extends ImagesCommonService {
 		return this.convertToPayloads(this.collectImageUrlsMap(message), locale);
 	}
 
-	public sendPayloads(interaction: RepliableInteraction, payloads: ReplyPayload[]): Promise<Message[]> {
-		return Promise.all([
-			interaction.reply(payloads[0]),
-			...payloads.slice(1).map((payload) => interaction.followUp(payload))
-		]);
+	public async sendPayloads(interaction: RepliableInteraction, payloads: ReplyPayload[]): Promise<Message[]> {
+		const messages: Message[] = [];
+
+		messages.push(await interaction.reply(payloads[0]));
+
+		for (const payload of payloads.slice(1)) {
+			messages.push(await interaction.followUp(payload));
+		}
+
+		return messages;
 	}
 
 	private convertToPayloads(imageUrlsMap: Collection<string, string[]>, locale: string): ReplyPayload[] {

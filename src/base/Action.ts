@@ -13,11 +13,11 @@ export abstract class Action<EventName extends keyof ClientEvents> {
 
 	public execute(...args: ClientEvents[EventName]): void {
 		Logger.debug(`Start ${this.actionName}.`);
-		Logger.debug(this.actionName, 'received:', args.join('\n'));
+		Logger.debug(this.actionName, 'received:', args);
 
 		this.call(...args)
 			.then((response) => Logger.debug(this.actionName, 'responded:', response))
-			.catch((error) => Logger.error(this.actionName, 'threw:', `${error}\n\ncaused by:\n`, args.join('\n')))
+			.catch((error) => Logger.error(this.actionName, 'threw:', error, '\n\ncaused by:', args))
 			.finally(() => Logger.debug(`Finish ${this.actionName}.`));
 	}
 
