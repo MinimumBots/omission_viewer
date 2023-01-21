@@ -30,7 +30,11 @@ export class OmissionViewer {
 	private readonly bot = new Client(this.clientOptions)
 		.on('ready', async (bot) => await this.runJobs(bot))
 		.on('ready', (bot) => Logger.info(`Fetched ${bot.guilds.cache.size} guilds, and ${bot.channels.cache.size} channels.`))
-		.on('shardReady', (shardId) => Logger.info(`No.${shardId} shard is ready.`))
+		.on('shardReady', (shardId) => Logger.info(`No.${shardId} shard turns ready.`))
+		.on('shardResume', (shardId) => Logger.info(`No.${shardId} shard resumes successfully.`))
+		.on('shardReconnecting', (shardId) => Logger.warn(`No.${shardId} shard is attempting to reconnect or re-identify.`))
+		.on('shardDisconnect', (shardId) => Logger.fatal(`No.${shardId} shard's WebSocket disconnects and will no longer reconnect.`))
+		.on('shardError', (error) => Logger.error(error))
 		.on('debug', (debug) => Logger.debug(debug))
 		.on('warn', (warn) => Logger.warn(warn))
 		.on('error', (error) => Logger.error(error));
@@ -43,8 +47,8 @@ export class OmissionViewer {
 			.catch((error) => Logger.error(error));
 
 		process
-			.on('SIGTERM', () => this.terminate())
-			.on('SIGINT', () => this.terminate());
+			.on('SIGTERM', (signal) => this.terminate(signal))
+			.on('SIGINT', (signal) => this.terminate(signal));
 	}
 
 	private async runJobs(bot: Client<true>): Promise<void> {
@@ -55,7 +59,9 @@ export class OmissionViewer {
 	/**
 	 * Stop the bot safely.
 	 */
-	private terminate(): void {
+	private terminate(signal: NodeJS.Signals): void {
+		Logger.warn(`A "${signal}" signal terminates the bot.`);
+
 		this.bot.destroy();
 		process.exit(0);
 	}
