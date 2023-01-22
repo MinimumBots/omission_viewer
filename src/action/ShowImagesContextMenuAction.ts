@@ -12,13 +12,17 @@ export class ShowImagesContextMenuAction extends InteractionAction {
 	protected override async process(interaction: Interaction): Promise<object | null> {
 		const contextMenu = ShowImagesContextMenu.singleton;
 
-		if (!interaction.inCachedGuild() || !interaction.isMessageContextMenuCommand() || !contextMenu.match(interaction)) {
+		if (!interaction.inGuild() || !interaction.isMessageContextMenuCommand() || !contextMenu.match(interaction)) {
 			return null;
 		}
 
-		const payloads = this.service.buildReplyPayloads(interaction.targetMessage, interaction.locale);
+		const payloads = this.service.buildReplyPayloads(await interaction.targetMessage.fetch(), interaction.locale);
 		if (payloads.length < 1) {
-			throw new InteractionError({ transPhrase: TranslateCode.ERR00002 });
+			throw new InteractionError({
+				target: interaction,
+				transPhrase: TranslateCode.ERR00002,
+				transLocale: interaction.locale,
+			});
 		}
 
 		return this.service.sendPayloads(interaction, payloads);

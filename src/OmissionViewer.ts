@@ -8,7 +8,7 @@ import type { ClientOptions } from 'discord.js';
 
 export class OmissionViewer {
 	private readonly cacheFactory = Options.cacheWithLimits({
-		MessageManager: 50,
+		MessageManager: 5,
 	});
 
 	private readonly clientOptions: ClientOptions = {
