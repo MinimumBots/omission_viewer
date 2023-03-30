@@ -10,20 +10,16 @@ export abstract class InteractionAction extends Action<'interactionCreate'> {
 		try {
 			return await this.process(interaction);
 		} catch (error: unknown) {
-			let interactionError: InteractionError;
-
 			if (error instanceof InteractionError) {
-				interactionError = error;
+				return new InteractionErrorReporter(error).report();
 			}
 
 			if (interaction.isRepliable()) {
-				interactionError ??= new InteractionError({
+				new InteractionErrorReporter(new InteractionError({
+					target: interaction,
 					transPhrase: TranslateCode.ERR00001,
 					transLocale: interaction.locale,
-				});
-				interactionError.option.target = interaction;
-
-				return new InteractionErrorReporter(interactionError).report();
+				})).report();
 			}
 
 			throw error;

@@ -10,7 +10,7 @@ export class ShowImagesButtonAction extends InteractionAction {
 	protected override async process(interaction: Interaction): Promise<object | null> {
 		const component = ShowImagesComponent.singleton;
 
-		if (!interaction.inCachedGuild() || !interaction.isButton() || !component.match(interaction)) {
+		if (!interaction.inGuild() || !interaction.isButton() || !component.match(interaction)) {
 			return null;
 		}
 

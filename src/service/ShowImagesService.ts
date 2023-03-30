@@ -7,7 +7,7 @@ import type { Collection, Message, RepliableInteraction } from 'discord.js';
 import type { ReplyPayload } from '../constant/typing';
 
 export class ShowImagesService extends ImagesCommonService {
-	public async fetchReplyedMessage(message: Message<true>): Promise<Message<true> | null> {
+	public async fetchReplyedMessage(message: Message): Promise<Message | null> {
 		const referenceMessageId = message.reference?.messageId;
 
 		if (!referenceMessageId || message.type !== MessageType.Reply) {
@@ -21,11 +21,11 @@ export class ShowImagesService extends ImagesCommonService {
 		}
 	}
 
-	public isShowable(message: Message<true>): boolean {
+	public isShowable(message: Message): boolean {
 		return this.containsSomeImages(message);
 	}
 
-	public buildReplyPayloads(message: Message<true>, locale: string): ReplyPayload[] {
+	public buildReplyPayloads(message: Message, locale: string): ReplyPayload[] {
 		return this.convertToPayloads(this.collectImageUrlsMap(message), locale);
 	}
 
